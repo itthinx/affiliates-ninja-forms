@@ -21,7 +21,7 @@
  * Plugin Name: Affiliates Ninja Forms Integration
  * Plugin URI: http://www.itthinx.com/plugins/affiliates-ninja-forms/
  * Description: Integrates Affiliates with Ninja Forms
- * Version: 2.0
+ * Version: 2.0.0
  * Author: itthinx
  * Author URI: http://www.itthinx.com/
  * Donate-Link: http://www.itthinx.com/shop/affiliates-enterprise/
