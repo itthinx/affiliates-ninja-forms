@@ -33,6 +33,7 @@
  */
 class Affiliates_Ninja_Forms_Integration {
 
+	const NINJA_FORMS_INTEGRATION_NAME = 'affiliates-ninjaforms';
 	const NINJA_FORMS_POST_TYPE = 'ninja_forms';
 	const PLUGIN_OPTIONS = 'affiliates_ninja_forms';
 	const NONCE = 'aff_ninjaforms_admin_nonce';
@@ -139,12 +140,79 @@ class Affiliates_Ninja_Forms_Integration {
 				);
 			}
 		}
-
-		if ( class_exists( 'Affiliates_Referral_WordPress' ) ) {
-			$r = new Affiliates_Referral_WordPress();
-			$affiliate_id = $r->evaluate( $post_id, $description, $data, $base_amount, $amount, $currency, $ninja_forms_referral_status, self::NINJA_FORMS_POST_TYPE );
+		if ( defined( 'AFFILIATES_EXT_VERSION' ) 
+				&& version_compare( AFFILIATES_EXT_VERSION, '3.0.0' ) >= 0 && 
+				class_exists( 'Affiliates_Referral' ) &&
+				(
+					!defined( 'Affiliates_Referral::DEFAULT_REFERRAL_CALCULATION_KEY' ) ||
+					!get_option( Affiliates_Referral::DEFAULT_REFERRAL_CALCULATION_KEY, null )
+				)
+			) {
+			$affiliate_id = Affiliates_Service::get_referrer_id();
+			if ( $affiliate_id ) {
+				// create referral using Affiliates Pro/Enterprise 3.x API
+				$referrer_params = array();
+				$rc = new Affiliates_Referral_Controller();
+				if ( $params = $rc->evaluate_referrer() ) {
+					$referrer_params[] = $params;
+				}
+				$n = count( $referrer_params );
+				if ( $n > 0 ) {
+					foreach( $referrer_params as $params ) {
+						$affiliate_id = $params['affiliate_id'];
+						$order_items = $order->get_items();
+						if ( count( $order_items ) > 0 ) {
+							$referral_items = array();
+							foreach( $order_items as $order_item_id => $order_item ) {
+								$rate_id   = null;
+								$object_id = null;
+								$term_ids  = null;
+								if ( $product = $order_item->get_product() ) {
+									$object_id = $product->get_id();
+									$term_ids = $product->get_category_ids();
+								}
+								if ( $rate = $rc->seek_rate( array(
+										'affiliate_id' => $affiliate_id,
+										'object_id'    => $post_id,
+										'integration'  => self::NINJA_FORMS_INTEGRATION_NAME
+								) ) ) {
+									$rate_id = $rate->rate_id;
+									$type = self::NINJA_FORMS_POST_TYPE;
+									// split proportional total if multiple affiliates are involved
+									if ( $n > 1 ) {
+										$amount = bcdiv( $amount, $n, affiliates_get_referral_amount_decimals() );
+									}
+									$referral_item = new Affiliates_Referral_Item( array(
+											'rate_id'     => $rate_id,
+											'amount'      => $amount,
+											'currency_id' => $currency,
+											'type'        => $type,
+											'reference'   => $post_id,
+											'line_amount' => $amount
+									) );
+									$referral_items[] = $referral_item;
+								}
+							}
+						}
+						$params['post_id']          = $post_id;
+						$params['description']      = $description;
+						$params['data']             = $data;
+						$params['currency_id']      = $currency;
+						$params['type']             = self::NINJA_FORMS_POST_TYPE;
+						$params['referral_items']   = $referral_items;
+						$params['reference']        = $post_id;
+						$params['reference_amount'] = $amount;
+						$rc->add_referral( $params );
+					}
+				}
+			}
 		} else {
-			$affiliate_id = affiliates_suggest_referral( $post_id, $description, $data, $amount, $currency, $ninja_forms_referral_status, self::NINJA_FORMS_POST_TYPE );
+			if ( class_exists( 'Affiliates_Referral_WordPress' ) ) {
+				$r = new Affiliates_Referral_WordPress();
+				$affiliate_id = $r->evaluate( $post_id, $description, $data, $base_amount, $amount, $currency, $ninja_forms_referral_status, self::NINJA_FORMS_POST_TYPE );
+			} else {
+				$affiliate_id = affiliates_suggest_referral( $post_id, $description, $data, $amount, $currency, $ninja_forms_referral_status, self::NINJA_FORMS_POST_TYPE );
+			}
 		}
 	}
 
