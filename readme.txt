@@ -4,7 +4,7 @@ Donate link: http://www.itthinx.com/plugins/affiliates-ninja-forms
 Tags: ads, advertising, affiliate, affiliate marketing, affiliate plugin, affiliate tool, affiliates, bucks, contact form, crm, earn money, e-commerce, integration, lead, link, marketing, money, online sale, order, partner, referral, referral links, referrer, shopping cart, sales, shop, shopping cart, site, track, transaction, NinjaForms, ninja, forms, WordPress
 Requires at least: 4.4
 Tested up to: 4.8.1
-Stable tag: 1.0
+Stable tag: 2.0.0
 License: GPLv3
 
 This plugin integrates Affiliates with NinjaForms.
