@@ -21,18 +21,23 @@
  * Plugin Name: Affiliates Ninja Forms Integration
  * Plugin URI: http://www.itthinx.com/plugins/affiliates-ninja-forms/
  * Description: Integrates Affiliates with Ninja Forms
- * Version: 1.0
+ * Version: 2.0.0
  * Author: itthinx
  * Author URI: http://www.itthinx.com/
  * Donate-Link: http://www.itthinx.com/shop/affiliates-enterprise/
  * License: GPLv3
  */
 
+if ( !defined( 'AFFILIATES_NINJA_FORMS_CORE_DIR' ) ) {
+	define( 'AFFILIATES_NINJA_FORMS_CORE_DIR', WP_PLUGIN_DIR . '/affiliates-ninja-forms' );
+}
+
 /**
  * Integration for Ninja Forms.
  */
 class Affiliates_Ninja_Forms_Integration {
 
+	const NINJA_FORMS_INTEGRATION_NAME = 'affiliates-ninjaforms';
 	const NINJA_FORMS_POST_TYPE = 'ninja_forms';
 	const PLUGIN_OPTIONS = 'affiliates_ninja_forms';
 	const NONCE = 'aff_ninjaforms_admin_nonce';
@@ -58,51 +63,17 @@ class Affiliates_Ninja_Forms_Integration {
 	public static function init() {
 
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
-
-		add_action ( 'ninja_forms_process', array( __CLASS__, 'ninja_forms_process' ) );
 		add_action( 'affiliates_admin_menu', array( __CLASS__, 'affiliates_admin_menu' ) );
 
-	}
-
-	
-	public static function ninja_forms_process() {
-		global $ninja_forms_processing;
-	
-		$post_id = $ninja_forms_processing->get_form_ID();
-	
-		$description = sprintf( 'NinjaForms form %s', $post_id );
-		
-		$options = get_option( self::PLUGIN_OPTIONS , array() );
-		
-		$base_amount = null;
-		$amount = isset( $options['aff_ninja_forms_amount'] ) ? $options['aff_ninja_forms_amount'] : '0';
-		$currency = isset( $options['aff_ninja_forms_currency'] ) ? $options['aff_ninja_forms_currency'] : Affiliates::DEFAULT_CURRENCY;
-		$ninja_forms_referral_status = isset( $options['aff_ninja_forms_referral_status'] ) ? $options['aff_ninja_forms_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
-		
-		$data = array();
-		
-		//Get all the user submitted values
-		$all_fields = $ninja_forms_processing->get_all_submitted_fields();
-		
-		if ( is_array( $all_fields ) ) {
-			foreach ( $all_fields as $field_id => $user_value ) {
-				$field_value = $ninja_forms_processing->get_field_value( $field_id );
-				$field_settings = $ninja_forms_processing->get_field_settings( $field_id );
-				
-				$data[$field_id] = array(
-						'title' => $field_settings['data']['label'],
-						'domain' => 'affiliates',
-						'value' => $field_value
-				);
-			}
-		}
-
-		if ( class_exists( 'Affiliates_Referral_WordPress' ) ) {
-			$r = new Affiliates_Referral_WordPress();
-			$affiliate_id = $r->evaluate( $post_id, $description, $data, $base_amount, $amount, $currency, $ninja_forms_referral_status, self::NINJA_FORMS_POST_TYPE );
+		if ( defined( 'AFFILIATES_EXT_VERSION' ) && version_compare( AFFILIATES_EXT_VERSION, '3.0.0' ) >= 0 ) {
+			$comp = '/comp';
 		} else {
-			$affiliate_id = affiliates_suggest_referral( $post_id, $description, $data, $amount, $currency, $ninja_forms_referral_status, self::NINJA_FORMS_POST_TYPE );
+			$comp = '/comp-2';
 		}
+		if ( !defined( 'AFFILIATES_NINJA_FORMS_COMP_LIB' ) ) {
+			define( 'AFFILIATES_NINJA_FORMS_COMP_LIB', AFFILIATES_NINJA_FORMS_CORE_DIR . '/lib' . $comp );
+		}
+		require_once( AFFILIATES_NINJA_FORMS_COMP_LIB . '/class-affiliates-ninja-forms.php');
 
 	}
 
@@ -134,7 +105,7 @@ class Affiliates_Ninja_Forms_Integration {
 		$options = get_option( self::PLUGIN_OPTIONS , array() );
 		if ( isset( $_POST['submit'] ) ) {
 			if ( wp_verify_nonce( $_POST[self::NONCE], self::SET_ADMIN_OPTIONS ) ) {
-				
+
 				if ( !empty( $_POST['amount'] ) ) {
 					$amount = floatval( $_POST['amount'] );
 					if ( $amount < 0 ) {
@@ -163,7 +134,7 @@ class Affiliates_Ninja_Forms_Integration {
 		$output .= 'div.field span.description { display: block; }';
 		$output .= 'div.buttons { padding-top: 1em; }';
 		$output .= '</style>';
-		
+
 		$output .=
 			'<div>' .
 			'<h2>' .
@@ -173,11 +144,11 @@ class Affiliates_Ninja_Forms_Integration {
 
 		$output .= '<div class="manage" style="padding:2em;margin-right:1em;">';
 		$output .= '<form action="" name="options" method="post">';        
-		
+
 		$ninja_forms_amount      = isset( $options['aff_ninja_forms_amount'] ) ? $options['aff_ninja_forms_amount'] : '0';
 		$ninja_forms_currency    = isset( $options['aff_ninja_forms_currency'] ) ? $options['aff_ninja_forms_currency'] : Affiliates::DEFAULT_CURRENCY;
 		$ninja_forms_referral_status = isset( $options['aff_ninja_forms_referral_status'] ) ? $options['aff_ninja_forms_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
-		
+
 		// amount
 		$output .= '<div class="field ninja-forms-amount">';
 		$output .= '<label>';
@@ -188,7 +159,7 @@ class Affiliates_Ninja_Forms_Integration {
 		$output .= sprintf( '<input type="text" name="amount" value="%s"/>', esc_attr( $ninja_forms_amount ) );
 		$output .= '</label>';
 		$output .= '</div>';
-		
+
 		// currency
 		$currency_select = '<select name="currency">';
 		foreach( apply_filters( 'affiliates_supported_currencies', Affiliates::$supported_currencies ) as $cid ) {
@@ -205,7 +176,7 @@ class Affiliates_Ninja_Forms_Integration {
 		$output .= $currency_select;
 		$output .= '</label>';
 		$output .= '</div>';
-		
+
 		$status_descriptions = array(
 				AFFILIATES_REFERRAL_STATUS_ACCEPTED => __( 'Accepted', 'affiliates' ),
 				AFFILIATES_REFERRAL_STATUS_PENDING  => __( 'Pending', 'affiliates' )
@@ -229,7 +200,7 @@ class Affiliates_Ninja_Forms_Integration {
 		$output .= $status_select;
 		$output .= '</label>';
 		$output .= '</div>';
-		
+
 		$output .= '<p>';
 		$output .= wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
 		$output .= '<input class="button-primary" type="submit" name="submit" value="' . __( 'Save', 'affiliates-ninja-forms' ) . '"/>';
