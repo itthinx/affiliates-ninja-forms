@@ -28,6 +28,14 @@
  * License: GPLv3
  */
 
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+if ( !defined( 'AFFILIATES_NINJA_FORMS_CORE_DIR' ) ) {
+	define( 'AFFILIATES_NINJA_FORMS_CORE_DIR', WP_PLUGIN_DIR . '/affiliates-ninja-forms' );
+}
+
 /**
  * Integration for Ninja Forms.
  */
@@ -52,7 +60,14 @@ class Affiliates_Ninja_Forms {
 	public static function admin_notices() {
 		if ( !empty( self::$admin_messages ) ) {
 			foreach ( self::$admin_messages as $msg ) {
-				echo wp_kses( $msg, array() );
+				echo wp_kses( $msg, array(
+					'a'      => array( 'href' => array(), 'target' => array(), 'title' => array() ),
+					'br'     => array(),
+					'div'    => array( 'class' => array() ),
+					'em'     => array(),
+					'p'      => array( 'class' => array() ),
+					'strong' => array()
+				) );
 			}
 		}
 	}
@@ -99,7 +114,7 @@ class Affiliates_Ninja_Forms {
 	 */
 	public static function affiliates_admin_ninja_forms() {
 		if ( !current_user_can( AFFILIATES_ADMINISTER_OPTIONS ) ) {
-			wp_die( wp_kses( __( 'Access denied.', 'affiliates-ninja-forms' ), array() ) );
+			wp_die( esc_html__( 'Access denied.', 'affiliates-ninja-forms' ) );
 		}
 		$options = get_option( self::PLUGIN_OPTIONS , array() );
 		if ( isset( $_POST['submit'] ) ) {
@@ -137,7 +152,7 @@ class Affiliates_Ninja_Forms {
 		echo
 			'<div>' .
 			'<h2>' .
-			wp_kses( __( 'Affiliates Ninja Forms Integration', 'affiliates-ninja-forms' ), array() ) .
+			esc_html__( 'Affiliates Ninja Forms Integration', 'affiliates-ninja-forms' ) .
 			'</h2>' .
 			'</div>';
 
@@ -152,7 +167,7 @@ class Affiliates_Ninja_Forms {
 		echo '<div class="field ninja-forms-amount">';
 		echo '<label>';
 		echo '<span class="label">';
-		echo wp_kses( __( 'Amount', 'affiliates' ), array() );
+		echo esc_html__( 'Amount', 'affiliates' );
 		echo '</span>';
 		echo ' ';
 		echo sprintf( '<input type="text" name="amount" value="%s"/>', esc_attr( $ninja_forms_amount ) );
@@ -163,13 +178,13 @@ class Affiliates_Ninja_Forms {
 		echo '<div class="field ninja-forms-currency">';
 		echo '<label>';
 		echo '<span class="label">';
-		echo wp_kses( __( 'Currency', 'affiliates' ), array() );
+		echo esc_html__( 'Currency', 'affiliates' );
 		echo '</span>';
 		echo ' ';
 		echo '<select name="currency">';
 		foreach ( apply_filters( 'affiliates_supported_currencies', Affiliates::$supported_currencies ) as $cid ) {
 			$selected = ( $ninja_forms_currency == $cid ) ? ' selected="selected" ' : '';
-			echo '<option ' . wp_kses( $selected, admin() ) . ' value="' . esc_attr( $cid ) . '">' . wp_kses( $cid, array() ) . '</option>';
+			echo '<option ' . esc_attr( $selected ) . ' value="' . esc_attr( $cid ) . '">' . esc_html( $cid ) . '</option>';
 		}
 		echo '</select>';
 		echo '</label>';
@@ -182,7 +197,7 @@ class Affiliates_Ninja_Forms {
 		echo '<div class="field ninja-forms-referral-status">';
 		echo '<label>';
 		echo '<span class="label">';
-		echo wp_kses( __( 'Referral Status', 'affiliates' ) );
+		echo esc_html__( 'Referral Status', 'affiliates' );
 		echo '</span>';
 		echo ' ';
 		echo "<select name='status'>";
@@ -192,7 +207,7 @@ class Affiliates_Ninja_Forms {
 			} else {
 				$selected = '';
 			}
-			echo "<option value='" . wp_kses( $status_key, array() ) . "' " . wp_kses( $selected, array() ) . '>' . wp_kses( $status_value, array() ) . '</option>';
+			echo "<option value='" . esc_attr( $status_key ) . "' " . esc_attr( $selected ) . '>' . esc_html( $status_value ) . '</option>';
 		}
 		echo '</select>';
 		echo '</label>';
@@ -200,14 +215,14 @@ class Affiliates_Ninja_Forms {
 
 		echo '<p>';
 		echo wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
-		echo '<input class="button-primary" type="submit" name="submit" value="' . wp_kses( __( 'Save', 'affiliates-ninja-forms' ), array() ) . '"/>';
+		echo '<input class="button-primary" type="submit" name="submit" value="' . esc_attr__( 'Save', 'affiliates-ninja-forms' ) . '"/>';
 		echo '</p>';
 
 		echo '</div>';
 		echo '</form>';
 		echo '</div>';
 
-		echo wp_kses( affiliates_footer( false ), array( 'div' => array( 'class' => array() ), 'p' => array(), 'a' => array( 'href' => array(), 'target' => array() ) ) );
+		affiliates_footer( false );
 
 	}
 

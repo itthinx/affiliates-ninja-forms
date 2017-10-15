@@ -28,8 +28,8 @@
  * License: GPLv3
  */
 
-if ( !defined( 'AFFILIATES_NINJA_FORMS_CORE_DIR' ) ) {
-	define( 'AFFILIATES_NINJA_FORMS_CORE_DIR', WP_PLUGIN_DIR . '/affiliates-ninja-forms' );
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 require_once 'class-affiliates-ninja-forms.php';

@@ -19,6 +19,10 @@
  * @since affiliates-ninja-forms 2.0.0
  */
 
+if ( !defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Integration controller.
  */
