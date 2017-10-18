@@ -32,4 +32,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+define( 'AFFILIATES_NINJA_FORMS_PLUGIN_VERSION', '2.0.0' );
+define( 'AFFILIATES_NINJA_FORMS_CORE_DIR', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
+
 require_once 'class-affiliates-ninja-forms.php';

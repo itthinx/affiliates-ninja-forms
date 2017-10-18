@@ -23,10 +23,6 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( !defined( 'AFFILIATES_NINJA_FORMS_CORE_DIR' ) ) {
-	define( 'AFFILIATES_NINJA_FORMS_CORE_DIR', WP_PLUGIN_DIR . '/affiliates-ninja-forms' );
-}
-
 /**
  * Integration for Ninja Forms.
  */
