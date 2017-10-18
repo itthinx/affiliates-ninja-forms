@@ -70,22 +70,6 @@ class Affiliates_Ninja_Forms {
 	 * Loads the classes according to the Affiliates version.
 	 */
 	public static function wp_init() {
-		if (
-			defined( 'AFFILIATES_EXT_VERSION' ) &&
-			version_compare( AFFILIATES_EXT_VERSION, '3.0.0' ) >= 0 &&
-			class_exists( 'Affiliates_Referral' ) &&
-			(
-				!defined( 'Affiliates_Referral::DEFAULT_REFERRAL_CALCULATION_KEY' ) ||
-				!get_option( Affiliates_Referral::DEFAULT_REFERRAL_CALCULATION_KEY, null )
-			)
-		) {
-			$comp = '/comp';
-		} else {
-			$comp = '/comp-2';
-		}
-		if ( !defined( 'AFFILIATES_NINJA_FORMS_COMP_LIB' ) ) {
-			define( 'AFFILIATES_NINJA_FORMS_COMP_LIB', AFFILIATES_NINJA_FORMS_CORE_DIR . '/lib' . $comp );
-		}
 		require_once AFFILIATES_NINJA_FORMS_COMP_LIB . '/class-affiliates-nf-admin.php';
 		require_once AFFILIATES_NINJA_FORMS_COMP_LIB . '/class-affiliates-nf.php';
 	}
