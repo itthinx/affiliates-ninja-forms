@@ -189,6 +189,9 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 				$output .= esc_html__( 'Create a rate', 'affiliates-ninja-forms' );
 				$output .= '</a>';
 				$output .= '</p>';
+				$output .= '<p class="description">';
+				$output .= esc_html( __( 'Please save any changes before you click the link to create a rate or the link to a rate, as this will take you away from editing this form.', 'affiliates-ninja-forms' ) );
+				$output .= '</p>';
 				$this->_settings['affiliates_referrals']['settings'][] = array(
 					'name'  => 'affiliates_rates',
 					'label' => __( 'Affiliates Rates', 'affiliates-ninja-forms' ),
