@@ -60,18 +60,13 @@ class Affiliates_Ninja_Forms {
 
 	/**
 	 * Checks dependencies and adds appropriate actions and filters.
+	 * Loads the classes according to the Affiliates version.
 	 */
 	public static function init() {
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
-		add_action( 'init', array( __CLASS__, 'wp_init' ) );
-	}
-
-	/**
-	 * Loads the classes according to the Affiliates version.
-	 */
-	public static function wp_init() {
 		require_once AFFILIATES_NINJA_FORMS_COMP_LIB . '/class-affiliates-nf-admin.php';
 		require_once AFFILIATES_NINJA_FORMS_COMP_LIB . '/class-affiliates-nf.php';
+		include_once AFFILIATES_NINJA_FORMS_COMP_LIB. '/class-affiliates-nf-action.php'; // @todo make this require_once if we drop support on < 2.x
 	}
 }
 Affiliates_Ninja_Forms::init();

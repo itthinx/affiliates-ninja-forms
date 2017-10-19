@@ -33,6 +33,23 @@ class Affiliates_NF {
 	 */
 	public static function init() {
 		add_action( 'ninja_forms_after_submission', array( __CLASS__, 'ninja_forms_after_submission' ) );
+		add_action( 'delete_post', array( __CLASS__, 'delete_post' ) );
+		add_action( 'wp_trash_post', array( __CLASS__, 'wp_trash_post' ) );
+		add_action( 'untrash_post', array( __CLASS__, 'untrash_post' ) );
+	}
+
+	public static function delete_post( $post_id ) {
+		if ( get_post_type( $post_id ) === 'nf_sub' ) {
+			
+		}
+	}
+
+	public static function wp_trash_post( $post_id ) {
+		
+	}
+
+	public static function untrash_post( $post_id ) {
+		
 	}
 
 	/**
@@ -40,22 +57,47 @@ class Affiliates_NF {
 	 *
 	 * @param array $form_data
 	 */
-	public static function ninja_forms_after_submission( $form_data ) {
-		global $ninja_forms_processing, $post_id;
-		$form_id = $form_data['form_id'];
+	//public static function ninja_forms_after_submission( $form_data ) {
+	
+	/**
+	 * Save form submission handler.
+	 * @param int $sub_id saved form's ID
+	 */
+	public static function nf_save_sub( $sub_id ) {
 
-		$description = sprintf( 'NinjaForms form %s', $form_id );
+		global $ninja_forms_processing, $post_id;
 
 		$options = get_option( Affiliates_Ninja_Forms::PLUGIN_OPTIONS , array() );
 
-		$base_amount = null;
-		$amount = 0;
+		/**
+		 * The saved form submission.
+		 * @var NF_Sub $sub
+		 */
+		$sub = Ninja_Forms()->sub( $sub_id );
+		if ( empty( $sub->sub_id ) ) {
+			return;
+		}
+
+		$form_id = $sub->form_id;
+
+		/**
+		 * The form related to the submission.
+		 * @var NF_Form $form
+		 */
+		$form = Ninja_Forms()->form( $form_id );
+
+		$description = sprintf( 'Ninja Forms form %s', $form_id );
 		$ninja_forms_referral_status = isset( $options['aff_ninja_forms_referral_status'] ) ? $options['aff_ninja_forms_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
+
+		$amount = 0;
+		if ( $total = $ninja_forms_processing->get_calc_total( false, false ) ) {
+			$amount = $total;
+		}
 
 		$data = array();
 
 		//Get all the user submitted values
-		$all_fields = $form_data['fields']; //$ninja_forms_processing->get_all_submitted_fields();
+		$all_fields = $sub->get_all_fields(); //$form_data['fields']; //$ninja_forms_processing->get_all_submitted_fields();
 
 		if ( is_array( $all_fields ) ) {
 			foreach ( $all_fields as $field_id => $field_data ) {

@@ -37,7 +37,70 @@ class Affiliates_NF_Admin {
 	public static function init() {
 		if ( current_user_can( AFFILIATES_ADMINISTER_OPTIONS ) ) {
 			add_action( 'affiliates_admin_menu', array( __CLASS__, 'affiliates_admin_menu' ) );
+			// http://developer.ninjaforms.com/codex/registering-plugin-settings/
+			add_filter( 'ninja_forms_plugin_settings', array( __CLASS__, 'ninja_forms_plugin_settings' ) );
+			add_filter( 'ninja_forms_plugin_settings_groups', array( __CLASS__, 'ninja_forms_plugin_settings_groups' ) );
+			
 		}
+	}
+
+	/**
+	 * Renders the setting section under Ninja Forms > Settings for our Affiliates integration.
+	 *
+	 * @param array $settings current settings
+	 *
+	 * @return array with our settings section added
+	 */
+	public static function ninja_forms_plugin_settings( $settings ) {
+		$settings['affiliates'] = array(
+			'affiliates' => array(
+				'id'    => 'affiliates',
+				'type'  => 'desc',
+				'label' => __( 'Affiliates Integration', 'affiliates-ninja-forms' ),
+				'desc'  =>
+					'<p>' .
+					sprintf(
+						__( 'You have the <strong>Affiliates</strong> integration by <a href="%s">itthinx</a> for Ninja Forms installed.', 'affiliates-ninja-forms' ),
+						esc_url( 'https://www.itthinx.com/' )
+					) .
+					'</p>' .
+					'<p>' .
+					sprintf(
+						__( 'This integrates <a href="%s">Affiliates</a>, <a href="%s">Affiliates Pro</a> and <a href="%s">Affiliates Enterprise</a> with Ninja Forms.', 'affiliates-ninja-forms' ),
+						esc_url( 'https://wordpress.org/plugins/affiliates/' ),
+						esc_url( 'https://www.itthinx.com/shop/affiliates-pro/' ),
+						esc_url( 'https://www.itthinx.com/shop/affiliates-enterprise/' )
+					) .
+					'</p>' .
+					'<p>' .
+					__( 'To enable the integration for a form, add the <strong>Affiliates</strong> action to it.', 'affiliates-ninja-forms' ) .
+					'</p>' .
+					'<p>' .
+					__( 'Please refer to these documentation pages for more details:', 'affiliates-ninja-forms' ) .
+					'<ul>' .
+					'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates/setup/settings/integrations/' ) ) .'</li>' .
+					'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Pro</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/' ) ) .'</li>' .
+					'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Enterprise</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/' ) ) .'</li>' .
+					'</ul>' .
+					'</p>'
+			),
+		);
+		return $settings;
+	}
+
+	/**
+	 * Adds our settings group under Ninja Forms > Settings.
+	 *
+	 * @param array $groups current groups
+	 *
+	 * @return array with our group added
+	 */
+	public static function ninja_forms_plugin_settings_groups( $groups ) {
+		$groups['affiliates'] = array(
+			'id'    => 'affiliates',
+			'label' => __( 'Affiliates', 'affiliates-ninja-forms' )
+		);
+		return $groups;
 	}
 
 	/**
