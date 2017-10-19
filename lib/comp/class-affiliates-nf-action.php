@@ -38,15 +38,12 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	}
 
 	/**
-	 * Create a new instance. Registers our settings.
+	 * Returns true if we are using rates.
+	 *
+	 * @return boolean true if using rates
 	 */
-	public function __construct() {
-		parent::__construct();
-		$this->_nicename = __( 'Affiliates', 'affiliates-ninja-forms' );
-		// $settings = Ninja_Forms::config( 'ActionAffiliatesSettings' );
-		// $this->_settings = array_merge( $this->_settings, $settings );
-
-		$use_rates = false;
+	private static function using_rates() {
+		$using_rates = false;
 		if (
 			defined( 'AFFILIATES_EXT_VERSION' ) &&
 			version_compare( AFFILIATES_EXT_VERSION, '3.0.0' ) >= 0 &&
@@ -54,10 +51,21 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 			(
 				!defined( 'Affiliates_Referral::DEFAULT_REFERRAL_CALCULATION_KEY' ) ||
 				!get_option( Affiliates_Referral::DEFAULT_REFERRAL_CALCULATION_KEY, null )
-			)
+				)
 		) {
-			$use_rates = true;
+			$using_rates = true;
 		}
+		return $using_rates;
+	}
+
+	/**
+	 * Create a new instance. Registers our settings.
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->_nicename = __( 'Affiliates', 'affiliates-ninja-forms' );
+		// $settings = Ninja_Forms::config( 'ActionAffiliatesSettings' );
+		// $this->_settings = array_merge( $this->_settings, $settings );
 
 		$this->_settings['affiliates_registration'] = array(
 			'name' => 'affiliates_registration',
@@ -123,7 +131,8 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 			)
 		);
 
-		if ( !$use_rates ) {
+		$form_id = isset( $_REQUEST['form_id'] ) && is_numeric( $_REQUEST['form_id'] ) ? $_REQUEST['form_id'] : null;
+		if ( !self::using_rates() ) {
 			$this->_settings['affiliates_referrals']['settings'][] = array(
 				'name'  => 'affiliates_referral_amount',
 				'label' => __( 'Referral Amount', 'affiliates-ninja-forms' ),
@@ -147,7 +156,6 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 				'width' => 'full'
 			);
 		} else {
-			$form_id = isset( $_REQUEST['form_id'] ) && is_numeric( $_REQUEST['form_id'] ) ? $_REQUEST['form_id'] : null;
 			if ( $form_id !== null ) {
 				$output = '';
 				$rates = Affiliates_Rate::get_rates( array( 'integration' => 'affiliates-ninja-forms', 'object_id' => $form_id ) );
@@ -202,6 +210,48 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 				);
 			}
 		}
+		if ( $form_id !== null ) {
+			$currency = Ninja_Forms()->form( $form_id )->get()->get_setting( 'currency' );
+			if ( empty( $currency ) ) {
+				$currency = Ninja_Forms()->get_setting( 'currency' );
+			}
+			$this->_settings['affiliates_referrals']['settings'][] = array(
+				'name'  => 'affiliates_currency',
+				'label' => __( 'Currency', 'affiliates-ninja-forms' ),
+				'type'  => 'html',
+				'value' => '<p class="description">' . sprintf( __( 'The currency used for this form is <strong>%s</strong>.', 'affiliates-ninja-forms' ), esc_html( $currency ) ) . '</p>',
+				'group' => 'primary',
+				'width' => 'full'
+			);
+		}
+	}
+
+	/**
+	 * Basic checks for field consistency.
+	 *
+	 * {@inheritDoc}
+	 * @see NF_Abstracts_Action::save()
+	 */
+	public function save( $action_settings ) {
+		if ( !self::using_rates() ) {
+			$amount = !empty( $action_settings['affiliates_referral_amount'] ) ? trim( $action_settings['affiliates_referral_amount'] ) : '';
+			if ( !empty( $amount ) && floatval( $amount ) < 0 ) {
+				$amount = '';
+			}
+			$rate = !empty( $action_settings['affiliates_referral_rate'] ) ? trim( $action_settings['affiliates_referral_rate'] ) : '';
+			if ( !empty( $rate ) && floatval( $rate ) < 0 ) {
+				$rate = '';
+			}
+			if ( !empty( $rate ) && floatval( $rate ) > 1 ) {
+				$rate = '1';
+			}
+			if ( !empty( $amount ) && !empty( $rate ) ) {
+				$rate = '';
+			}
+			$action_settings['affiliates_referral_amount'] = $amount;
+			$action_settings['affiliates_referral_rate'] = $rate;
+		}
+		return $action_settings;
 	}
 
 	/**
