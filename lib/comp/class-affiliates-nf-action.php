@@ -391,39 +391,24 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 
 		$description = sprintf( 'Ninja Forms form %d submission %d', $form_id, $sub_id );
 
-		
-		
-		// @todo remove
-		//Get all the user submitted values
-// 		$all_fields = $sub->get_field_values();
-// 		error_log( __METHOD__. ' ' . var_export( $all_fields, true)); 
-// $data = array();
-// 		if ( is_array( $all_fields ) ) {
-// 			foreach ( $all_fields as $field_id => $field_value ) {
-// 				$data[$field_id] = array(
-// 					'title' => $field_data['label'],
-// 					'domain' => 'affiliates',
-// 					'value' => $field_value
-// 				);
-// 			}
-// 		}
-
 		$referral_data = array();
 		$fields = $factory->get_fields();
 		foreach( $fields as $field ) {
-			
 			$value = '';
 			$key   = $field->get_setting( 'key' );
 			$type  = $field->get_setting( 'type' );
 			$label = $field->get_setting( 'label' );
-			$value = $sub->get_field_value( $key );
+			if ( $type === 'shipping' ) {
+				$value = $field->get_setting( 'shipping_cost' );
+			} else {
+				$value = $sub->get_field_value( $key );
+			}
 			$referral_data[$key] = array(
 				'title'  => $label,
 				'domain' => 'affiliates',
 				'value'  => $value
 			);
 		}
-		error_log( __METHOD__. ' referral data ' . var_export( $referral_data, true)); 
 
 		$base_amount = !empty( $action['affiliates_base_amount'] ) ? $action['affiliates_base_amount'] : '';
 		if ( $base_amount === '' ) { // automatic
@@ -480,14 +465,14 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 							'group_ids'    => $group_ids
 					) ) ) {
 						$rate_id = $rate->rate_id;
-						
+						$amount = '0';
 						switch ( $rate->type ) {
 							case AFFILIATES_PRO_RATES_TYPE_AMOUNT :
 								$amount = bcadd( '0', $rate->value, affiliates_get_referral_amount_decimals() );
 								break;
 							case AFFILIATES_PRO_RATES_TYPE_RATE :
 								// check form for base_amount
-								$amount = bcmul( $amount, $rate->value, affiliates_get_referral_amount_decimals() );
+								$amount = bcmul( $base_amount, $rate->value, affiliates_get_referral_amount_decimals() );
 								break;
 						}
 						// split proportional total if multiple affiliates are involved
