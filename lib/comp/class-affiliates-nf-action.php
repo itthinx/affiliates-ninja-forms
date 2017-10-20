@@ -311,11 +311,11 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	/**
 	 * Handle the affiliate registration request.
 	 *
-	 * @param unknown $action
-	 * @param unknown $form_id
-	 * @param unknown $data
-	 * @param unknown $sub_id
-	 * @param unknown $sub
+	 * @param array $action action settings
+	 * @param int $form_id form ID
+	 * @param array $data form, submission and other data
+	 * @param int $sub_id submission ID
+	 * @param NF_Database_Models_Submission $sub submission object
 	 */
 	private function process_registration( &$action, &$form_id, &$data, &$sub_id = null, &$sub = null ) {
 		// @todo implement
@@ -324,11 +324,11 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	/**
 	 * Handle the referral request.
 	 *
-	 * @param unknown $action
-	 * @param unknown $form_id
-	 * @param unknown $data
-	 * @param unknown $sub_id
-	 * @param unknown $sub
+	 * @param array $action action settings
+	 * @param int $form_id form ID
+	 * @param array $data form, submission and other data
+	 * @param int $sub_id submission ID
+	 * @param NF_Database_Models_Submission $sub submission object
 	 */
 	private function process_referral( &$action, &$form_id, &$data, &$sub_id = null, &$sub = null ) {
 		$currency = Ninja_Forms()->form( $form_id )->get()->get_setting( 'currency' );
