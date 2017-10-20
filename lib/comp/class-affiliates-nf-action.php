@@ -76,6 +76,25 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	}
 
 	/**
+	 * Returns the currency for the form or the default currency.
+	 * If no $form_id is given or the form has no specific currency, the default currency is used.
+	 * If no default currency is obtained, USD is returned.
+	 *
+	 * @param int $form_id form ID
+	 * @return boolean|string|number
+	 */
+	private static function get_currency( $form_id = null ) {
+		$currency = 'USD';
+		if ( $form_id !== null ) {
+			$currency = Ninja_Forms()->form( $form_id )->get()->get_setting( 'currency' );
+		}
+		if ( empty( $currency ) ) {
+			$currency = Ninja_Forms()->get_setting( 'currency' );
+		}
+		return $currency;
+	}
+
+	/**
 	 * Create a new instance. Registers our settings.
 	 */
 	public function __construct() {
@@ -247,10 +266,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 			}
 		}
 		if ( $form_id !== null ) {
-			$currency = Ninja_Forms()->form( $form_id )->get()->get_setting( 'currency' );
-			if ( empty( $currency ) ) {
-				$currency = Ninja_Forms()->get_setting( 'currency' );
-			}
+			$currency = $this->get_currency( $form_id );
 			$this->_settings['affiliates_referrals']['settings'][] = array(
 				'name'  => 'affiliates_currency',
 				'label' => __( 'Currency', 'affiliates-ninja-forms' ),
@@ -369,11 +385,8 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	 * @param NF_Database_Models_Submission $sub submission object
 	 */
 	private function process_referral( &$action, &$form_id, &$data, &$factory, &$sub_id = null, &$sub = null ) {
-		$currency = Ninja_Forms()->form( $form_id )->get()->get_setting( 'currency' );
-		if ( empty( $currency ) ) {
-			$currency = Ninja_Forms()->get_setting( 'currency' );
-		}
-		$status = isset( $action['affiliates_referral_status'] ) ? $action['affiliates_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
+		$currency = $this->get_currency( $form_id );
+		$status   = isset( $action['affiliates_referral_status'] ) ? $action['affiliates_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
 
 		$total = bcadd( '0', '0', affiliates_get_referral_amount_decimals() );
 		$fields = $factory->get_fields();
