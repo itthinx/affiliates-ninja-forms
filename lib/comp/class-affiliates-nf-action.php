@@ -30,10 +30,10 @@ if ( !defined( 'ABSPATH' ) ) {
  */
 class Affiliates_NF_Action extends NF_Abstracts_Action {
 
-	protected $_name = 'affiliates';
+	protected $_name     = 'affiliates';
 	protected $_nicename = '';
-	protected $_tags = array( 'affiliate', 'affiliates', 'affiliates pro', 'affiliates enterprise', 'itthinx', 'referral', 'referrals', 'lead', 'leads', 'registration', 'growth', 'growthhacking', 'growthmarketing' );
-	protected $_timing = 'late';
+	protected $_tags     = array( 'affiliate', 'affiliates', 'affiliates pro', 'affiliates enterprise', 'itthinx', 'referral', 'referrals', 'lead', 'leads', 'registration', 'growth', 'growthhacking', 'growthmarketing' );
+	protected $_timing   = 'late';
 	protected $_priority = '10';
 
 	/**
@@ -385,35 +385,154 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	 * @param NF_Database_Models_Submission $sub submission object
 	 */
 	private function process_referral( &$action, &$form_id, &$data, &$factory, &$sub_id = null, &$sub = null ) {
+		$d        = affiliates_get_referral_amount_decimals();
 		$currency = $this->get_currency( $form_id );
 		$status   = isset( $action['affiliates_referral_status'] ) ? $action['affiliates_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
 
-		$total = bcadd( '0', '0', affiliates_get_referral_amount_decimals() );
+		$description = sprintf( 'Ninja Forms form %d submission %d', $form_id, $sub_id );
+
+		
+		
+		// @todo remove
+		//Get all the user submitted values
+// 		$all_fields = $sub->get_field_values();
+// 		error_log( __METHOD__. ' ' . var_export( $all_fields, true)); 
+// $data = array();
+// 		if ( is_array( $all_fields ) ) {
+// 			foreach ( $all_fields as $field_id => $field_value ) {
+// 				$data[$field_id] = array(
+// 					'title' => $field_data['label'],
+// 					'domain' => 'affiliates',
+// 					'value' => $field_value
+// 				);
+// 			}
+// 		}
+
+		$referral_data = array();
 		$fields = $factory->get_fields();
 		foreach( $fields as $field ) {
-			$value = '0';
+			
+			$value = '';
 			$key   = $field->get_setting( 'key' );
 			$type  = $field->get_setting( 'type' );
-			if ( $type === 'total' ) {
-				$value = $sub->get_field_value( $key );
-				$total = bcadd( $total, $value, affiliates_get_referral_amount_decimals() );
+			$label = $field->get_setting( 'label' );
+			$value = $sub->get_field_value( $key );
+			$referral_data[$key] = array(
+				'title'  => $label,
+				'domain' => 'affiliates',
+				'value'  => $value
+			);
+		}
+		error_log( __METHOD__. ' referral data ' . var_export( $referral_data, true)); 
+
+		$base_amount = !empty( $action['affiliates_base_amount'] ) ? $action['affiliates_base_amount'] : '';
+		if ( $base_amount === '' ) { // automatic
+			$total = bcadd( '0', '0', $d );
+			$fields = $factory->get_fields();
+			foreach( $fields as $field ) {
+				$value = '0';
+				$key   = $field->get_setting( 'key' );
+				$type  = $field->get_setting( 'type' );
+				if ( $type === 'total' ) {
+					$value = $sub->get_field_value( $key );
+					$total = bcadd( $total, $value, affiliates_get_referral_amount_decimals() );
+				}
+				if ( $type === 'shipping' ) {
+					// doesn't have a value
+					// $value = $sub->get_field_value( $key );
+					$value = $field->get_setting( 'shipping_cost' );
+					$total = bcsub( $total, $value, affiliates_get_referral_amount_decimals() );
+				}
 			}
-			if ( $type === 'shipping' ) {
-				// doesn't have a value
-				// $value = $sub->get_field_value( $key );
-				$value = $field->get_setting( 'shipping_cost' );
-				$total = bcsub( $total, $value, affiliates_get_referral_amount_decimals() );
-			}
-// 			error_log(__METHOD__. ' ========== field value  = ' . var_export($value,true)); // @todo remove
-// 			error_log(__METHOD__. ' ========== field key  = ' . var_export($key,true)); // @todo remove
-// 			error_log(__METHOD__. ' ========== field type = ' . var_export($type,true)); // @todo remove
-// 			error_log(__METHOD__. ' ========== total = ' . var_export($total,true)); // @todo remove
+			$base_amount = $total;
+		} else {
+			$base_amount = bcadd( $base_amount, '0', $d );
 		}
 
-// 		error_log(__METHOD__. ' ========== action = ' . var_export($action,true)); // @todo remove
-// 		error_log(__METHOD__. ' ========== data   = ' . var_export($data,true)); // @todo remove
-// 		error_log(__METHOD__. ' ========== sub    = ' . var_export($sub,true)); // @todo remove
-		
+		if ( $this->using_rates() ) {
+			// Using Affiliates 3.x API
+			$referrer_params = array();
+			$rc = new Affiliates_Referral_Controller();
+			if ( $params = $rc->evaluate_referrer() ) {
+				$referrer_params[] = $params;
+			}
+			$n = count( $referrer_params );
+			if ( $n > 0 ) {
+				foreach ( $referrer_params as $params ) {
+					$affiliate_id = $params['affiliate_id'];
+					$group_ids = null;
+					if ( class_exists( 'Groups_User' ) ) {
+						if ( $affiliate_user_id = affiliates_get_affiliate_user( $affiliate_id ) ) {
+							$groups_user = new Groups_User( $affiliate_user_id );
+							$group_ids = $groups_user->group_ids_deep;
+							if ( !is_array( $group_ids ) || ( count( $group_ids ) === 0 ) ) {
+								$group_ids = null;
+							}
+						}
+					}
+
+					$referral_items = array();
+					if ( $rate = $rc->seek_rate( array(
+							'affiliate_id' => $affiliate_id,
+							'object_id'    => $form_id,
+							'term_ids'     => null,
+							'integration'  => 'affiliates-ninja-forms',
+							'group_ids'    => $group_ids
+					) ) ) {
+						$rate_id = $rate->rate_id;
+						
+						switch ( $rate->type ) {
+							case AFFILIATES_PRO_RATES_TYPE_AMOUNT :
+								$amount = bcadd( '0', $rate->value, affiliates_get_referral_amount_decimals() );
+								break;
+							case AFFILIATES_PRO_RATES_TYPE_RATE :
+								// check form for base_amount
+								$amount = bcmul( $amount, $rate->value, affiliates_get_referral_amount_decimals() );
+								break;
+						}
+						// split proportional total if multiple affiliates are involved
+						if ( $n > 1 ) {
+							$amount = bcdiv( $amount, $n, affiliates_get_referral_amount_decimals() );
+						}
+
+						$referral_item = new Affiliates_Referral_Item( array(
+								'rate_id'     => $rate_id,
+								'amount'      => $amount,
+								'currency_id' => $rate->currency_id,
+								'type'        => 'nf_sub',
+								'reference'   => $sub_id,
+								'line_amount' => $amount,
+								'object_id'   => $form_id
+						) );
+						$referral_items[] = $referral_item;
+					}
+					$params['post_id']          = $sub_id;
+					$params['description']      = $description;
+					$params['data']             = $referral_data;
+					$params['currency_id']      = $rate->currency_id;
+					$params['type']             = Affiliates_Ninja_Forms::REFERRAL_TYPE; // 'nform'
+					$params['referral_items']   = $referral_items;
+					$params['reference']        = $sub_id;
+					$params['reference_amount'] = $amount;
+					$params['integration']      = 'affiliates-ninja-forms';
+					
+					$rc->add_referral( $params );
+				}
+			}
+		} else {
+			$referral_amount = !empty( $action['affiliates_referral_amount'] ) ? $action['affiliates_referral_amount'] : '0';
+			$referral_rate = !empty( $action['affiliates_referral_rate'] ) ? $action['affiliates_referral_rate'] : '0';
+			if ( empty( $referral_amount ) && !empty( $referral_rate ) ) {
+				$referral_amount = bcmul( $referral_rate, $base_amount, $d );
+			}
+			if ( class_exists( 'Affiliates_Referral_WordPress' ) ) {
+				$r = new Affiliates_Referral_WordPress();
+				$affiliate_id = $r->evaluate( $sub_id, $description, $referral_data, null, $referral_amount, $currency, $status, Affiliates_Ninja_Forms::REFERRAL_TYPE, $sub_id );
+			} else {
+				$affiliate_id = affiliates_suggest_referral( $sub_id, $description, $referral_data, $referral_amount, $currency, $status, Affiliates_Ninja_Forms::REFERRAL_TYPE, $sub_id );
+			}
+		}
+
 	}
 
 }
