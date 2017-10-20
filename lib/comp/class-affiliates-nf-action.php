@@ -144,6 +144,23 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 						array( 'value' => AFFILIATES_REFERRAL_STATUS_CLOSED, 'label' => __( 'Closed', 'affiliates-ninja-forms' ) )
 					),
 					'width' => 'one-half'
+				),
+				array(
+					'name'           => 'affiliates_base_amount',
+					'label'          => __( 'Transaction Base Amount', 'affiliates-ninja-forms' ),
+					'type'           => 'textbox',
+					'group'          => 'primary',
+					'help'           => __( 'You can choose the field that is used to calculate the commission here. If left empty, the net amount will be calculated automatically, based on the form\'s total minus shipping.', 'affiliates-ninja-forms' ),
+					'placeholder'    => __( 'Automatic', 'affiliates-ninja-forms' ),
+					'value'          => '',
+					'width'          => 'full',
+					'use_merge_tags' => array(
+						'exclude' => array(
+							'post',
+							'user',
+							'system'
+						)
+					)
 				)
 			)
 		);
@@ -317,11 +334,11 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 		}
 
 		if ( !empty( $action['affiliates_enable_registration'] ) ) {
-			$this->process_registration( $action, $form_id, $data, $sub_id, $sub );
+			$this->process_registration( $action, $form_id, $data, $factory, $sub_id, $sub );
 		}
 
 		if ( !empty( $action['affiliates_enable_referrals'] ) ) {
-			$this->process_referral( $action, $form_id, $data, $sub_id, $sub );
+			$this->process_referral( $action, $form_id, $data, $factory, $sub_id, $sub );
 		}
 
 		return $data;
@@ -333,10 +350,11 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	 * @param array $action action settings
 	 * @param int $form_id form ID
 	 * @param array $data form, submission and other data
+	 * @param NF_Abstracts_ModelFactory $factory form factory
 	 * @param int $sub_id submission ID
 	 * @param NF_Database_Models_Submission $sub submission object
 	 */
-	private function process_registration( &$action, &$form_id, &$data, &$sub_id = null, &$sub = null ) {
+	private function process_registration( &$action, &$form_id, &$data, &$factory, &$sub_id = null, &$sub = null ) {
 		// @todo implement
 	}
 
@@ -346,19 +364,43 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	 * @param array $action action settings
 	 * @param int $form_id form ID
 	 * @param array $data form, submission and other data
+	 * @param NF_Abstracts_ModelFactory $factory form factory
 	 * @param int $sub_id submission ID
 	 * @param NF_Database_Models_Submission $sub submission object
 	 */
-	private function process_referral( &$action, &$form_id, &$data, &$sub_id = null, &$sub = null ) {
+	private function process_referral( &$action, &$form_id, &$data, &$factory, &$sub_id = null, &$sub = null ) {
 		$currency = Ninja_Forms()->form( $form_id )->get()->get_setting( 'currency' );
 		if ( empty( $currency ) ) {
 			$currency = Ninja_Forms()->get_setting( 'currency' );
 		}
 		$status = isset( $action['affiliates_referral_status'] ) ? $action['affiliates_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
 
-		error_log(__METHOD__. ' ========== action = ' . var_export($action,true)); // @todo remove
-		error_log(__METHOD__. ' ========== data   = ' . var_export($data,true)); // @todo remove
-		error_log(__METHOD__. ' ========== sub    = ' . var_export($sub,true)); // @todo remove
+		$total = bcadd( '0', '0', affiliates_get_referral_amount_decimals() );
+		$fields = $factory->get_fields();
+		foreach( $fields as $field ) {
+			$value = '0';
+			$key   = $field->get_setting( 'key' );
+			$type  = $field->get_setting( 'type' );
+			if ( $type === 'total' ) {
+				$value = $sub->get_field_value( $key );
+				$total = bcadd( $total, $value, affiliates_get_referral_amount_decimals() );
+			}
+			if ( $type === 'shipping' ) {
+				// doesn't have a value
+				// $value = $sub->get_field_value( $key );
+				$value = $field->get_setting( 'shipping_cost' );
+				$total = bcsub( $total, $value, affiliates_get_referral_amount_decimals() );
+			}
+// 			error_log(__METHOD__. ' ========== field value  = ' . var_export($value,true)); // @todo remove
+// 			error_log(__METHOD__. ' ========== field key  = ' . var_export($key,true)); // @todo remove
+// 			error_log(__METHOD__. ' ========== field type = ' . var_export($type,true)); // @todo remove
+// 			error_log(__METHOD__. ' ========== total = ' . var_export($total,true)); // @todo remove
+		}
+
+// 		error_log(__METHOD__. ' ========== action = ' . var_export($action,true)); // @todo remove
+// 		error_log(__METHOD__. ' ========== data   = ' . var_export($data,true)); // @todo remove
+// 		error_log(__METHOD__. ' ========== sub    = ' . var_export($sub,true)); // @todo remove
+		
 	}
 
 }
