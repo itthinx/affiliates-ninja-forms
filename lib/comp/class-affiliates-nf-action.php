@@ -34,7 +34,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	protected $_nicename = '';
 	protected $_tags = array( 'affiliate', 'affiliates', 'affiliates pro', 'affiliates enterprise', 'itthinx', 'referral', 'referrals', 'lead', 'leads', 'registration', 'growth', 'growthhacking', 'growthmarketing' );
 	protected $_timing = 'late';
-	protected $_priority = '100';
+	protected $_priority = '10';
 
 	/**
 	 * Adds our hook to register our action.
@@ -44,15 +44,13 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	}
 
 	/**
-	 * Add our Affiliates action for authorized users.
+	 * Add our Affiliates action.
 	 *
 	 * @param array $actions current actions
 	 * @return array with our action added
 	 */
 	public static function ninja_forms_register_actions( $actions ) {
-		if ( current_user_can( AFFILIATES_ADMINISTER_OPTIONS ) ) {
-			$actions['affiliates'] = new Affiliates_NF_Action();
-		}
+		$actions['affiliates'] = new Affiliates_NF_Action();
 		return $actions;
 	}
 
@@ -200,25 +198,27 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 					$output .= esc_html( __( 'This form has no specific applicable rates.', 'affiliates-ninja-forms' ) );
 					$output .= '</p>';
 				}
-				$output .= '<p>';
-				$url = wp_nonce_url( add_query_arg(
-					array(
-						'integration' => 'affiliates-ninja-forms',
-						'action'      => 'create-rate',
-						'object_id'   => $form_id
-					),
-					admin_url( 'admin.php?page=affiliates-admin-rates' )
-				) );
-				$output .= sprintf(
-					'<a href="%s">',
-					esc_url( $url )
-				);
-				$output .= esc_html__( 'Create a rate', 'affiliates-ninja-forms' );
-				$output .= '</a>';
-				$output .= '</p>';
-				$output .= '<p class="description">';
-				$output .= esc_html( __( 'Please save any changes before you click the link to create a rate or the link to a rate, as this will take you away from editing this form.', 'affiliates-ninja-forms' ) );
-				$output .= '</p>';
+				if ( current_user_can( AFFILIATES_ADMINISTER_OPTIONS ) ) {
+					$output .= '<p>';
+					$url = wp_nonce_url( add_query_arg(
+						array(
+							'integration' => 'affiliates-ninja-forms',
+							'action'      => 'create-rate',
+							'object_id'   => $form_id
+						),
+						admin_url( 'admin.php?page=affiliates-admin-rates' )
+					) );
+					$output .= sprintf(
+						'<a href="%s">',
+						esc_url( $url )
+					);
+					$output .= esc_html__( 'Create a rate', 'affiliates-ninja-forms' );
+					$output .= '</a>';
+					$output .= '</p>';
+					$output .= '<p class="description">';
+					$output .= esc_html( __( 'Please save any changes before you click the link to create a rate or the link to a rate, as this will take you away from editing this form.', 'affiliates-ninja-forms' ) );
+					$output .= '</p>';
+				}
 				$this->_settings['affiliates_referrals']['settings'][] = array(
 					'name'  => 'affiliates_rates',
 					'label' => __( 'Affiliates Rates', 'affiliates-ninja-forms' ),
@@ -354,7 +354,11 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 		if ( empty( $currency ) ) {
 			$currency = Ninja_Forms()->get_setting( 'currency' );
 		}
-		
+		$status = isset( $action['affiliates_referral_status'] ) ? $action['affiliates_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
+
+		error_log(__METHOD__. ' ========== action = ' . var_export($action,true)); // @todo remove
+		error_log(__METHOD__. ' ========== data   = ' . var_export($data,true)); // @todo remove
+		error_log(__METHOD__. ' ========== sub    = ' . var_export($sub,true)); // @todo remove
 	}
 
 }
