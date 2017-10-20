@@ -15,7 +15,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	protected $_nicename = '';
 	protected $_tags = array( 'affiliate', 'affiliates', 'affiliates pro', 'affiliates enterprise', 'itthinx', 'referral', 'referrals', 'lead', 'leads', 'registration', 'growth', 'growthhacking', 'growthmarketing' );
 	protected $_timing = 'late';
-	protected $_priority = '10';
+	protected $_priority = '100';
 
 	/**
 	 * Adds our hook to register our action.
@@ -257,27 +257,87 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	/**
 	 * Handles the form submission for our action.
 	 *
+	 * @param $action array action settings (the abstract class declares this as $action_id)
+	 * @param $form_id int ID of the processed form
+	 * @param $data array form, submission and other data
+	 *
+	 * @return array $data
+	 *
 	 * {@inheritDoc}
 	 * @see NF_Abstracts_Action::process()
 	 */
-	public function process( $action_id, $form_id, $data ) {
-		
-// 		/*
-// 		 * Get our currency marker setting. First, we check the form, then plugin settings.
-// 		 */
-// 		$currency = Ninja_Forms()->form( $form_id )->get()->get_setting( 'currency' );
-		
-// 		if ( empty( $currency ) ) {
-// 			/*
-// 			 * Check our plugin currency.
-// 			 */
-// 			$currency = Ninja_Forms()->get_setting( 'currency' );
-// 		}
-		
-// 		$currency_symbols = Ninja_Forms::config( 'CurrencySymbol' );
-// 		$currency_symbol = html_entity_decode( $currency_symbols[ $currency ] );
+	public function process( $action, $form_id, $data ) {
+
+		// Don't act on preview submissions.
+		if (
+			isset( $data['settings'] ) &&
+			isset( $data['settings']['is_preview'] ) &&
+			$data['settings']['is_preview']
+		) {
+			return $data;
+		}
+
+		$sub    = null;
+		$sub_id = null;
+		if (
+			isset( $data['actions'] ) &&
+			isset( $data['actions']['save'] ) &&
+			!empty( $data['actions']['save']['sub_id'] )
+		) {
+			$sub_id = $data['actions']['save']['sub_id'];
+		}
+
+		/**
+		 * The factory object we'll use to obtain the submission object.
+		 *
+		 * @var NF_Abstracts_ModelFactory $form
+		 */
+		$factory = Ninja_Forms()->form( $form_id );
+		if ( method_exists( $factory, 'get_sub' ) ) {
+			$sub = $factory->get_sub( $sub_id );
+		}
+
+		if ( !empty( $action['affiliates_enable_registration'] ) ) {
+			$this->process_registration( $action, $form_id, $data, $sub_id, $sub );
+		}
+
+		if ( !empty( $action['affiliates_enable_referrals'] ) ) {
+			$this->process_referral( $action, $form_id, $data, $sub_id, $sub );
+		}
+
 		return $data;
 	}
+
+	/**
+	 * Handle the affiliate registration request.
+	 *
+	 * @param unknown $action
+	 * @param unknown $form_id
+	 * @param unknown $data
+	 * @param unknown $sub_id
+	 * @param unknown $sub
+	 */
+	private function process_registration( &$action, &$form_id, &$data, &$sub_id = null, &$sub = null ) {
+		// @todo implement
+	}
+
+	/**
+	 * Handle the referral request.
+	 *
+	 * @param unknown $action
+	 * @param unknown $form_id
+	 * @param unknown $data
+	 * @param unknown $sub_id
+	 * @param unknown $sub
+	 */
+	private function process_referral( &$action, &$form_id, &$data, &$sub_id = null, &$sub = null ) {
+		$currency = Ninja_Forms()->form( $form_id )->get()->get_setting( 'currency' );
+		if ( empty( $currency ) ) {
+			$currency = Ninja_Forms()->get_setting( 'currency' );
+		}
+		
+	}
+
 }
 
 Affiliates_NF_Action::init();

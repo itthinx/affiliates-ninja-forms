@@ -31,7 +31,7 @@ class Affiliates_Ninja_Forms {
 	const NINJA_FORMS_INTEGRATION_NAME = 'affiliates-ninjaforms';
 	const NINJA_FORMS_POST_TYPE        = 'ninja_forms';
 	const PLUGIN_OPTIONS               = 'affiliates_ninja_forms';
-	const REFERRAL_TYPE                = 'nf3_forms'; // Ninja Forms database table name.
+	const REFERRAL_TYPE                = 'nform';
 
 	/**
 	 * Admin messages

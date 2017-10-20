@@ -32,7 +32,8 @@ class Affiliates_NF {
 	 * Loads hooks
 	 */
 	public static function init() {
-		add_action( 'ninja_forms_after_submission', array( __CLASS__, 'ninja_forms_after_submission' ) );
+// 		add_action( 'nf_save_sub', array( __CLASS__, 'nf_save_sub' ) );
+// 		add_action( 'ninja_forms_after_submission', array( __CLASS__, 'ninja_forms_after_submission' ) );
 		add_action( 'delete_post', array( __CLASS__, 'delete_post' ) );
 		add_action( 'wp_trash_post', array( __CLASS__, 'wp_trash_post' ) );
 		add_action( 'untrash_post', array( __CLASS__, 'untrash_post' ) );
@@ -40,16 +41,16 @@ class Affiliates_NF {
 
 	public static function delete_post( $post_id ) {
 		if ( get_post_type( $post_id ) === 'nf_sub' ) {
-			
+			// @todo ...
 		}
 	}
 
 	public static function wp_trash_post( $post_id ) {
-		
+		// @todo ...
 	}
 
 	public static function untrash_post( $post_id ) {
-		
+		// @todo ...
 	}
 
 	/**
@@ -140,7 +141,6 @@ class Affiliates_NF {
 					'group_ids'    => $group_ids
 				) ) ) {
 					$rate_id = $rate->rate_id;
-					$type = Affiliates_Ninja_Forms::REFERRAL_TYPE;
 
 					switch ( $rate->type ) {
 						case AFFILIATES_PRO_RATES_TYPE_AMOUNT :
@@ -160,20 +160,20 @@ class Affiliates_NF {
 						'rate_id'     => $rate_id,
 						'amount'      => $amount,
 						'currency_id' => $rate->currency_id,
-						'type'        => $type,
-						'reference'   => $form_id,
+						'type'        => 'nf_sub',
+						'reference'   => $sub_id,
 						'line_amount' => $amount,
 						'object_id'   => $form_id
 					) );
 					$referral_items[] = $referral_item;
 				}
-				$params['post_id']          = $post_id;
+				$params['post_id']          = $sub_id;
 				$params['description']      = $description;
 				$params['data']             = $data;
 				$params['currency_id']      = $rate->currency_id;
-				$params['type']             = 'nform';
+				$params['type']             = Affiliates_Ninja_Forms::REFERRAL_TYPE; // 'nform'
 				$params['referral_items']   = $referral_items;
-				$params['reference']        = $form_id;
+				$params['reference']        = $sub_id;
 				$params['reference_amount'] = $amount;
 				$params['integration']      = 'affiliates-ninja-forms';
 
