@@ -130,13 +130,9 @@ class Affiliates_NF_Admin {
 		$options = get_option( Affiliates_Ninja_Forms::PLUGIN_OPTIONS , array() );
 		if ( isset( $_POST['submit'] ) ) {
 			if ( wp_verify_nonce( $_POST[self::NONCE], self::SET_ADMIN_OPTIONS ) ) {
-
-				if ( !empty( $_POST['status'] ) ) {
-					$options['aff_ninja_forms_referral_status'] = $_POST['status'];
-				}
-
+				// nothing here
 			}
-			update_option( Affiliates_Ninja_Forms::PLUGIN_OPTIONS, $options );
+			// update_option( Affiliates_Ninja_Forms::PLUGIN_OPTIONS, $options );
 		}
 
 		// css
@@ -156,91 +152,42 @@ class Affiliates_NF_Admin {
 
 		echo '<div class="manage" style="padding:2em;margin-right:1em;">';
 
-		echo '<h4>';
-		echo esc_html__( 'Rates', 'affiliates-ninja-forms' );
-		echo '</h4>';
+		echo '<p>' .
+				sprintf(
+						__( 'You have the <strong>Affiliates</strong> integration by <a href="%s">itthinx</a> for Ninja Forms installed.', 'affiliates-ninja-forms' ),
+						esc_url( 'https://www.itthinx.com/' )
+						) .
+						'</p>' .
+						'<p>' .
+						sprintf(
+								__( 'This integrates <a href="%s">Affiliates</a>, <a href="%s">Affiliates Pro</a> and <a href="%s">Affiliates Enterprise</a> with Ninja Forms.', 'affiliates-ninja-forms' ),
+								esc_url( 'https://wordpress.org/plugins/affiliates/' ),
+								esc_url( 'https://www.itthinx.com/shop/affiliates-pro/' ),
+								esc_url( 'https://www.itthinx.com/shop/affiliates-enterprise/' )
+								) .
+								'</p>' .
+								'<p>' .
+								__( 'To enable the integration for a form, add the <strong>Affiliates</strong> action to it.', 'affiliates-ninja-forms' ) .
+								'</p>' .
+								'<p>' .
+								__( 'Please refer to these documentation pages for more details:', 'affiliates-ninja-forms' ) .
+								'<ul>' .
+								'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates/setup/settings/integrations/' ) ) .'</li>' .
+								'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Pro</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/' ) ) .'</li>' .
+								'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Enterprise</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/' ) ) .'</li>' .
+								'</ul>' .
+								'</p>';
 
-		$rates = Affiliates_Rate::get_rates( array( 'integration' => 'affiliates-ninja-forms' ) );
+		echo sprintf( __( 'You can also review this information on the Ninja Forms <a href="%s">Settings</a> page.', 'affiliates-ninja-forms' ),  esc_url( admin_url( 'admin.php?page=nf-settings' ) ) );
 
-		if ( count( $rates ) > 0 ) {
-			echo '<p>';
-			echo esc_html( _n( 'This specific rate applies to this integration', 'These specific rates apply to this integration.', count( $rates ), 'affiliates-ninja-forms' ) );
-			echo '</p>';
-			$odd      = true;
-			$is_first = true;
-			echo '<table style="width:100%">';
-			foreach ( $rates as $rate ) {
-				if ( $is_first ) {
-					echo wp_kses_post( $rate->view( array( 'style' => 'table', 'titles' => true, 'exclude' => 'integration', 'prefix_class' => 'odd' ) ) );
-				} else {
-					echo wp_kses_post( $rate->view( array( 'style' => 'table', 'exclude' => 'integration', 'prefix_class' => $odd ? 'odd' : 'even' ) ) );
-				}
-				$is_first = false;
-				$odd      = !$odd;
-			}
-			echo '</table>';
-		} else {
-			echo '<p>';
-			echo esc_html( __( 'This integration has no specific applicable rates.', 'affiliates-ninja-forms' ) );
-			echo '</p>';
-		}
-		if ( current_user_can( AFFILIATES_ADMINISTER_OPTIONS ) ) {
-			echo '<p>';
-			$url = wp_nonce_url( add_query_arg(
-				array(
-					'integration' => 'affiliates-ninja-forms',
-					'action'      => 'create-rate'
-				),
-				admin_url( 'admin.php?page=affiliates-admin-rates' )
-			) );
-			echo sprintf(
-				'<a href="%s">',
-				esc_url( $url )
-			);
-			echo esc_html__( 'Create a rate', 'affiliates-ninja-forms' );
-			echo '</a>';
-			echo '</p>';
-		}
-
-		echo '<h4>';
-		echo esc_html__( 'Status', 'affiliates-ninja-forms' );
-		echo '</h4>';
-
-		echo '<form action="" name="options" method="post">';
-
-		$ninja_forms_referral_status = isset( $options['aff_ninja_forms_referral_status'] ) ? $options['aff_ninja_forms_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
-
-		$status_descriptions = array(
-			AFFILIATES_REFERRAL_STATUS_ACCEPTED => __( 'Accepted', 'affiliates' ),
-			AFFILIATES_REFERRAL_STATUS_PENDING  => __( 'Pending', 'affiliates' )
-		);
-		echo '<div class="field ninja-forms-referral-status">';
-		echo '<label>';
-		echo '<span class="label">';
-		echo esc_html__( 'Referral Status', 'affiliates' );
-		echo '</span>';
-		echo ' ';
-		echo "<select name='status'>";
-		foreach ( $status_descriptions as $status_key => $status_value ) {
-			if ( $status_key == $ninja_forms_referral_status ) {
-				$selected = "selected='selected'";
-			} else {
-				$selected = '';
-			}
-			echo "<option value='" . esc_attr( $status_key ) . "' " . esc_attr( $selected ) . '>' . esc_html( $status_value ) . '</option>';
-		}
-		echo '</select>';
-		echo '</label>';
-		echo '</div>';
-
-		echo '<p>';
-		echo wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
-		echo '<input class="button-primary" type="submit" name="submit" value="' . esc_attr__( 'Save', 'affiliates-ninja-forms' ) . '"/>';
-		echo '</p>';
+		// echo '<p>';
+		// echo wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
+		// echo '<input class="button-primary" type="submit" name="submit" value="' . esc_attr__( 'Save', 'affiliates-ninja-forms' ) . '"/>';
+		// echo '</p>';
 
 		echo '</div>';
 		echo '</form>';
-		echo '</div>';
+		echo '</div>'; // .manage
 
 		affiliates_footer( false );
 
