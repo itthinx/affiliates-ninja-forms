@@ -41,6 +41,9 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	 */
 	public static function init() {
 		add_action( 'ninja_forms_register_actions', array( __CLASS__, 'ninja_forms_register_actions' ) );
+		add_action( 'delete_post', array( __CLASS__, 'delete_post' ) );
+		add_action( 'wp_trash_post', array( __CLASS__, 'wp_trash_post' ) );
+		add_action( 'untrash_post', array( __CLASS__, 'untrash_post' ) );
 	}
 
 	/**
@@ -476,6 +479,20 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 			}
 		}
 
+	}
+
+	public static function delete_post( $post_id ) {
+		if ( get_post_type( $post_id ) === 'nf_sub' ) {
+			// @todo ...
+		}
+	}
+
+	public static function wp_trash_post( $post_id ) {
+		// @todo ...
+	}
+
+	public static function untrash_post( $post_id ) {
+		// @todo ...
 	}
 
 }

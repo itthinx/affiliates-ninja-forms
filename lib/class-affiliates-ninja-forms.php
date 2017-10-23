@@ -59,13 +59,11 @@ class Affiliates_Ninja_Forms {
 	}
 
 	/**
-	 * Checks dependencies and adds appropriate actions and filters.
-	 * Loads the classes according to the Affiliates version.
+	 * Class loading.
 	 */
 	public static function init() {
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 		require_once AFFILIATES_NINJA_FORMS_LIB . '/class-affiliates-nf-admin.php';
-		require_once AFFILIATES_NINJA_FORMS_LIB . '/class-affiliates-nf.php';
 		require_once AFFILIATES_NINJA_FORMS_LIB . '/class-affiliates-nf-action.php';
 		require_once AFFILIATES_NINJA_FORMS_LIB . '/class-affiliates-nf-registration-action.php';
 	}
