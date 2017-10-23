@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Affiliates form settings.
+ * Affiliates integration admin sections.
  */
 class Affiliates_NF_Admin {
 
@@ -57,32 +57,7 @@ class Affiliates_NF_Admin {
 				'id'    => 'affiliates',
 				'type'  => 'desc',
 				'label' => __( 'Affiliates Integration', 'affiliates-ninja-forms' ),
-				'desc'  =>
-					'<p>' .
-					sprintf(
-						__( 'You have the <strong>Affiliates</strong> integration by <a href="%s">itthinx</a> for Ninja Forms installed.', 'affiliates-ninja-forms' ),
-						esc_url( 'https://www.itthinx.com/' )
-					) .
-					'</p>' .
-					'<p>' .
-					sprintf(
-						__( 'This integrates <a href="%s">Affiliates</a>, <a href="%s">Affiliates Pro</a> and <a href="%s">Affiliates Enterprise</a> with Ninja Forms.', 'affiliates-ninja-forms' ),
-						esc_url( 'https://wordpress.org/plugins/affiliates/' ),
-						esc_url( 'https://www.itthinx.com/shop/affiliates-pro/' ),
-						esc_url( 'https://www.itthinx.com/shop/affiliates-enterprise/' )
-					) .
-					'</p>' .
-					'<p>' .
-					__( 'To enable the integration for a form, add the <strong>Affiliates</strong> action to it.', 'affiliates-ninja-forms' ) .
-					'</p>' .
-					'<p>' .
-					__( 'Please refer to these documentation pages for more details:', 'affiliates-ninja-forms' ) .
-					'<ul>' .
-					'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates/setup/settings/integrations/' ) ) .'</li>' .
-					'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Pro</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/' ) ) .'</li>' .
-					'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Enterprise</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/' ) ) .'</li>' .
-					'</ul>' .
-					'</p>'
+				'desc'  => self::get_info()
 			),
 		);
 		return $settings;
@@ -130,9 +105,9 @@ class Affiliates_NF_Admin {
 		$options = get_option( Affiliates_Ninja_Forms::PLUGIN_OPTIONS , array() );
 		if ( isset( $_POST['submit'] ) ) {
 			if ( wp_verify_nonce( $_POST[self::NONCE], self::SET_ADMIN_OPTIONS ) ) {
-				// nothing here
+				// currently nothing needed here
 			}
-			// update_option( Affiliates_Ninja_Forms::PLUGIN_OPTIONS, $options );
+			update_option( Affiliates_Ninja_Forms::PLUGIN_OPTIONS, $options );
 		}
 
 		// css
@@ -143,55 +118,63 @@ class Affiliates_NF_Admin {
 		echo 'div.buttons { padding-top: 1em; }';
 		echo '</style>';
 
-		echo
-		'<div>' .
-		'<h2>' .
-		esc_html__( 'Affiliates Ninja Forms Integration', 'affiliates-ninja-forms' ) .
-		'</h2>' .
-		'</div>';
+		echo '<div>';
+		echo '<h2>';
+		esc_html_e( 'Affiliates Ninja Forms Integration', 'affiliates-ninja-forms' );
+		echo '</h2>';
+		echo '</div>';
 
 		echo '<div class="manage" style="padding:2em;margin-right:1em;">';
 
-		echo '<p>' .
-				sprintf(
-						__( 'You have the <strong>Affiliates</strong> integration by <a href="%s">itthinx</a> for Ninja Forms installed.', 'affiliates-ninja-forms' ),
-						esc_url( 'https://www.itthinx.com/' )
-						) .
-						'</p>' .
-						'<p>' .
-						sprintf(
-								__( 'This integrates <a href="%s">Affiliates</a>, <a href="%s">Affiliates Pro</a> and <a href="%s">Affiliates Enterprise</a> with Ninja Forms.', 'affiliates-ninja-forms' ),
-								esc_url( 'https://wordpress.org/plugins/affiliates/' ),
-								esc_url( 'https://www.itthinx.com/shop/affiliates-pro/' ),
-								esc_url( 'https://www.itthinx.com/shop/affiliates-enterprise/' )
-								) .
-								'</p>' .
-								'<p>' .
-								__( 'To enable the integration for a form, add the <strong>Affiliates</strong> action to it.', 'affiliates-ninja-forms' ) .
-								'</p>' .
-								'<p>' .
-								__( 'Please refer to these documentation pages for more details:', 'affiliates-ninja-forms' ) .
-								'<ul>' .
-								'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates/setup/settings/integrations/' ) ) .'</li>' .
-								'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Pro</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/' ) ) .'</li>' .
-								'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Enterprise</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/' ) ) .'</li>' .
-								'</ul>' .
-								'</p>';
+		echo self::get_info();
 
-		echo sprintf( __( 'You can also review this information on the Ninja Forms <a href="%s">Settings</a> page.', 'affiliates-ninja-forms' ),  esc_url( admin_url( 'admin.php?page=nf-settings' ) ) );
+		echo sprintf( __( 'You can also review this information on the Ninja Forms <a href="%s">Settings</a> page.', 'affiliates-ninja-forms' ),  esc_url( admin_url( 'admin.php?page=nf-settings#ninja_forms_metabox_affiliates_settings' ) ) );
 
-		// echo '<p>';
-		// echo wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
-		// echo '<input class="button-primary" type="submit" name="submit" value="' . esc_attr__( 'Save', 'affiliates-ninja-forms' ) . '"/>';
-		// echo '</p>';
+		echo '<p>';
+		echo wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
+		echo '<input class="button-primary" type="submit" name="submit" value="' . esc_attr__( 'Save', 'affiliates-ninja-forms' ) . '"/>';
+		echo '</p>';
 
 		echo '</div>';
 		echo '</form>';
 		echo '</div>'; // .manage
 
-		affiliates_footer( false );
+		affiliates_footer();
 
 	}
 
+	/**
+	 * Returns information on the integration.
+	 *
+	 * @return string
+	 */
+	private static function get_info() {
+		return
+			'<p>' .
+			sprintf(
+				__( 'You have the <strong>Affiliates</strong> integration by <a href="%s">itthinx</a> for Ninja Forms installed.', 'affiliates-ninja-forms' ),
+				esc_url( 'https://www.itthinx.com/' )
+			) .
+			'</p>' .
+			'<p>' .
+			sprintf(
+				__( 'This integrates <a href="%s">Affiliates</a>, <a href="%s">Affiliates Pro</a> and <a href="%s">Affiliates Enterprise</a> with Ninja Forms.', 'affiliates-ninja-forms' ),
+				esc_url( 'https://wordpress.org/plugins/affiliates/' ),
+				esc_url( 'https://www.itthinx.com/shop/affiliates-pro/' ),
+				esc_url( 'https://www.itthinx.com/shop/affiliates-enterprise/' )
+			) .
+			'</p>' .
+			'<p>' .
+			__( 'To enable the integration for a form, add the <strong>Affiliates</strong> action to it.', 'affiliates-ninja-forms' ) .
+			'</p>' .
+			'<p>' .
+			__( 'Please refer to these documentation pages for more details:', 'affiliates-ninja-forms' ) .
+			'<ul>' .
+			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates/setup/settings/integrations/' ) ) .'</li>' .
+			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Pro</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/' ) ) .'</li>' .
+			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Enterprise</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/' ) ) .'</li>' .
+			'</ul>' .
+			'</p>';
+	}
 }
 Affiliates_NF_Admin::init();

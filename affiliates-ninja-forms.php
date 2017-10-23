@@ -38,23 +38,13 @@ define( 'AFFILIATES_NINJA_FORMS_PLUGIN_VERSION', '2.0.0' );
  * Plugin boot.
  */
 function affiliates_ninja_forms_plugins_loaded() {
-// 	if (
-// 		defined( 'AFFILIATES_EXT_VERSION' ) &&
-// 		version_compare( AFFILIATES_EXT_VERSION, '3.0.0' ) >= 0 &&
-// 		class_exists( 'Affiliates_Referral' ) &&
-// 		(
-// 			!defined( 'Affiliates_Referral::DEFAULT_REFERRAL_CALCULATION_KEY' ) ||
-// 			!get_option( Affiliates_Referral::DEFAULT_REFERRAL_CALCULATION_KEY, null )
-// 		)
-// 	) {
+	if ( class_exists( 'NF_Abstracts_Action' ) ) {
 		$comp = '/comp';
-// 	} else {
-// 		$comp = '/comp-2';
-// 	}
-	define( 'AFFILIATES_NINJA_FORMS_DIR', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
-	define( 'AFFILIATES_NINJA_FORMS_LIB', AFFILIATES_NINJA_FORMS_DIR . '/lib' );
-	define( 'AFFILIATES_NINJA_FORMS_COMP_LIB', AFFILIATES_NINJA_FORMS_LIB . $comp );
-	define( 'AFFILIATES_NINJA_FORMS_PLUGIN_URL', plugins_url( 'affiliates-ninja-forms' ) );
-	require_once 'class-affiliates-ninja-forms.php';
+		define( 'AFFILIATES_NINJA_FORMS_DIR', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
+		define( 'AFFILIATES_NINJA_FORMS_LIB', AFFILIATES_NINJA_FORMS_DIR . '/lib' );
+		define( 'AFFILIATES_NINJA_FORMS_COMP_LIB', AFFILIATES_NINJA_FORMS_LIB . $comp );
+		define( 'AFFILIATES_NINJA_FORMS_PLUGIN_URL', plugins_url( 'affiliates-ninja-forms' ) );
+		require_once 'class-affiliates-ninja-forms.php';
+	}
 }
 add_action( 'plugins_loaded', 'affiliates_ninja_forms_plugins_loaded' );
