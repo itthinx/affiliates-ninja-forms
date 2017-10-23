@@ -27,9 +27,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  
  
- Visit http://www.itthinx.com/ for help, general info and fun.
+ Visit http://www.itthinx.com/ for help on this and other plugins.
  
  Plugin page: http://www.itthinx.com/plugins/affiliates-ninja-forms
  Affiliates plugin: https://wordpress.org/plugins/affiliates
  Ninja Forms plugin: https://wordpress.org/plugins/ninja-forms
- 
