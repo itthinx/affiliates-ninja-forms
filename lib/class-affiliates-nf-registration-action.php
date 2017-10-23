@@ -41,6 +41,13 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	 */
 	public static function init() {
 		add_action( 'ninja_forms_register_actions', array( __CLASS__, 'ninja_forms_register_actions' ) );
+
+		// @todo remove ?
+		//add_filter( 'ninja_forms_display_fields', array( __CLASS__, 'ninja_forms_display_fields' ) );
+
+		// @todo keep ?
+		// $settings = apply_filters( 'ninja_forms_display_form_settings', $settings, $form_id );
+		add_filter( 'ninja_forms_display_form_settings', array( __CLASS__, 'ninja_forms_display_form_settings' ), 10, 2 );
 	}
 
 	/**
@@ -103,14 +110,12 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 				'group'    => 'primary',
 				'settings' => array()
 			);
-			include_once AFFILIATES_CORE_LIB . '/class-affiliates-settings.php';
-			include_once AFFILIATES_CORE_LIB . '/class-affiliates-settings-registration.php';
-			if ( class_exists( 'Affiliates_Settings_Registration' ) && method_exists( 'Affiliates_Settings_Registration', 'get_fields' ) ) {
-				$registration_fields = Affiliates_Settings_Registration::get_fields();
+			$registration_fields = self::get_affiliates_registration_fields();
+			if ( count( $registration_fields ) > 0 ) {
 				foreach ( $registration_fields as $name => $field ) {
 					if ( $field['enabled'] || $field['obligatory'] ) {
 						$this->_settings['affiliates_registration_mapping']['settings'][] = array(
-							'name'           => sprintf( 'affiliates_field_%s', $name ),
+							'name'           => self::get_mapped_affiliates_field_name( $name ),
 							'label'          => sprintf( __( 'Affiliates Field : %s', 'affiliates-ninja-forms' ), esc_html__( $field['label'], 'affiliates-ninja-forms' ) ),
 							'type'           => 'textbox',
 							'group'          => 'primary',
@@ -221,9 +226,80 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 		if ( !empty( $action['affiliates_enable_registration'] ) ) {
 			$status = isset( $action['affiliates_affiliate_status'] ) ? $action['affiliates_affiliate_status'] : get_option( 'aff_status', 'active' );
 			// @todo implement
+			
+			error_log(__METHOD__. ' action = ' . var_export($action,true)); // @todo remove
+			error_log(__METHOD__. ' form_id = ' . var_export($form_id,true)); // @todo remove
+			error_log(__METHOD__. ' data = ' . var_export($data,true)); // @todo remove
+			error_log(__METHOD__. ' factory = ' . var_export($factory,true)); // @todo remove
+			error_log(__METHOD__. ' sub_id = ' . var_export($sub_id,true)); // @todo remove
+			error_log(__METHOD__. ' sub = ' . var_export($sub,true)); // @todo remove
+
+			if ( defined( 'AFFILIATES_CORE_LIB' ) ) {
+				$user = wp_get_current_user();
+				$registration_fields = self::get_affiliates_registration_fields();
+				if ( count( $registration_fields ) > 0 ) {
+					$userdata = array();
+					foreach ( $registration_fields as $name => $field ) {
+						if ( $field['enabled'] || $field['obligatory'] ) {
+							$field_name = self::get_mapped_affiliates_field_name( $name );
+							$field_value = isset( $action[$field_name] ) ? $action[$field_name] : null;
+							if ( $value !== null ) {
+								$userdata[$name] = $action[$field_name];
+								// @todo : handle case when user is logged in (don't render fields and take fields from user object instead)
+							}
+						}
+					}
+					if ( !is_user_logged_in() ) {
+						do_action( 'affiliates_before_register_affiliate', $userdata );
+						$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
+						do_action( 'affiliates_after_register_affiliate', $userdata );
+					} else {
+						$affiliate_user_id = $user->ID;
+					}
+					if ( !is_wp_error( $affiliate_user_id ) ) {
+						$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
+						// update user including meta
+						Affiliates_Registration::update_affiliate_user( $affiliate_user_id, $userdata );
+						do_action( 'affiliates_stored_affiliate', $affiliate_id, $affiliate_user_id );
+					}
+				}
+			}
 		}
 	}
 
+	/**
+	 * Returns an array with registration fields from Affiliates > Settings > Registration.
+	 *
+	 * @return array of affiliate registration fields
+	 */
+	private static function get_affiliates_registration_fields() {
+		$registration_fields = array();
+		if ( defined( 'AFFILIATES_CORE_LIB' ) ) {
+			include_once AFFILIATES_CORE_LIB . '/class-affiliates-settings.php';
+			include_once AFFILIATES_CORE_LIB . '/class-affiliates-settings-registration.php';
+			if ( class_exists( 'Affiliates_Settings_Registration' ) && method_exists( 'Affiliates_Settings_Registration', 'get_fields' ) ) {
+				$registration_fields = Affiliates_Settings_Registration::get_fields();
+			}
+		}
+		return $registration_fields;
+	}
+
+	// @todo remove ?
+	public static function ninja_forms_display_fields( $fields ) {
+		error_log(var_export($fields,true)); // @todo remove
+		return $fields;
+	}
+
+	// @todo keep ?
+	public static function ninja_forms_display_form_settings( $settings, $form_id ) {
+		error_log(' form_id = ' . var_export($form_id,true)); // @todo remove
+		error_log(' settings : ' . var_export($settings,true)); // @todo remove
+		return $settings;
+	}
+
+	private static function get_mapped_affiliates_field_name( $name ) {
+		return sprintf( 'affiliates_field_%s', $name );
+	}
 }
 
 Affiliates_NF_Registration_Action::init();
