@@ -524,7 +524,40 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	 */
 	public static function untrash_post( $post_id ) {
 		if ( get_post_type( $post_id ) === 'nf_sub' ) {
-			
+			if ( class_exists( 'Affiliates_Referral' ) && method_exists( 'Affiliates_Referral', 'get_ids_by_reference' ) ) {
+				/**
+				 * The factory object used to obtain the submission object.
+				 *
+				 * @var NF_Abstracts_ModelFactory $factory
+				 */
+				$factory = Ninja_Forms()->form();
+				if ( method_exists( $factory, 'get_sub' ) ) {
+					if ( $sub = $factory->get_sub( $post_id ) ) {
+						$form = Ninja_Forms()->form( $sub->get_form_id() )->get();
+						if ( $form->get_id() ) {
+							$status = $form->get_setting( 'affiliates_referral_status' );
+							if ( empty( $status ) ) {
+								$status = get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
+							}
+							// reset the referral status
+							$referral_ids = Affiliates_Referral::get_ids_by_reference( $post_id );
+							foreach ( $referral_ids as $referral_id ) {
+								try {
+									$referral = new Affiliates_Referral();
+									if ( $referral->read( $referral_id ) ) {
+										if ( $referral->status !== AFFILIATES_REFERRAL_STATUS_CLOSED ) {
+											$referral->status = $status;
+											$referral->update();
+										}
+									}
+								} catch ( Exception $ex ) {
+								}
+							}
+						}
+					}
+				}
+
+			}
 		}
 	}
 
