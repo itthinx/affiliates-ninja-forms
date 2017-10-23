@@ -93,6 +93,58 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 				)
 			)
 		);
+
+		if ( defined( 'AFFILIATES_CORE_LIB' ) ) {
+			$this->_settings['affiliates_registration_mapping'] = array(
+				'name'     => 'affiliates_registration_mapping',
+				'type'     => 'fieldset',
+				'label'    => __( 'Affiliates Registration Field Mapping', 'affiliates-ninja-forms' ),
+				'width'    => 'full',
+				'group'    => 'primary',
+				'settings' => array()
+			);
+			include_once AFFILIATES_CORE_LIB . '/class-affiliates-settings.php';
+			include_once AFFILIATES_CORE_LIB . '/class-affiliates-settings-registration.php';
+			if ( class_exists( 'Affiliates_Settings_Registration' ) && method_exists( 'Affiliates_Settings_Registration', 'get_fields' ) ) {
+				$registration_fields = Affiliates_Settings_Registration::get_fields();
+				foreach ( $registration_fields as $name => $field ) {
+					if ( $field['enabled'] || $field['obligatory'] ) {
+						$this->_settings['affiliates_registration_mapping']['settings'][] = array(
+							'name'           => sprintf( 'affiliates_field_%s', $name ),
+							'label'          => sprintf( __( 'Affiliates Field : %s', 'affiliates-ninja-forms' ), esc_html__( $field['label'], 'affiliates-ninja-forms' ) ),
+							'type'           => 'textbox',
+							'group'          => 'primary',
+							'help'           => __( 'Choose the form field that is mapped to this affiliate registration field.', 'affiliates-ninja-forms' ),
+							'placeholder'    => __( 'Choose a field &hellip;', 'affiliates-ninja-forms' ),
+							'value'          => '',
+							'width'          => 'full',
+							'required'       => $field['required'],
+							'use_merge_tags' => array(
+								'include' => array(
+									'user',
+									'fields'
+								),
+								'exclude' => array(
+									'post',
+									'system',
+									'calculations'
+								)
+							)
+						);
+					}
+				}
+				// 'help' doesn't show on fieldset type so we add it like this
+				$this->_settings['affiliates_registration_mapping']['settings'][] = array(
+					'name' => 'affiliates_field_mapping_help',
+					'label' => '',
+					'type' => 'html',
+					'value' => sprintf(
+						__( 'Here you can relate fields defined in the Affiliates <a href="%s">Registration</a> settings with fields on this form.', 'affiliates-ninja-forms' ),
+						esc_url( add_query_arg( 'section', 'registration', admin_url( 'admin.php?page=affiliates-admin-settings' ) ) )
+					)
+				);
+			}
+		}
 	}
 
 	/**
@@ -166,7 +218,10 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	 * @param NF_Database_Models_Submission $sub submission object
 	 */
 	private function process_registration( &$action, &$form_id, &$data, &$factory, &$sub_id = null, &$sub = null ) {
-		// @todo implement
+		if ( !empty( $action['affiliates_enable_registration'] ) ) {
+			$status = isset( $action['affiliates_affiliate_status'] ) ? $action['affiliates_affiliate_status'] : get_option( 'aff_status', 'active' );
+			// @todo implement
+		}
 	}
 
 }

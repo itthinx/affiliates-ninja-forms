@@ -324,10 +324,6 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 			$sub = $factory->get_sub( $sub_id );
 		}
 
-		if ( !empty( $action['affiliates_enable_registration'] ) ) {
-			$this->process_registration( $action, $form_id, $data, $factory, $sub_id, $sub );
-		}
-
 		if ( !empty( $action['affiliates_enable_referrals'] ) ) {
 			$this->process_referral( $action, $form_id, $data, $factory, $sub_id, $sub );
 		}
