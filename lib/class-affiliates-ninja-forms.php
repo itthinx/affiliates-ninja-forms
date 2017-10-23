@@ -66,7 +66,7 @@ class Affiliates_Ninja_Forms {
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 		require_once AFFILIATES_NINJA_FORMS_LIB . '/class-affiliates-nf-admin.php';
 		require_once AFFILIATES_NINJA_FORMS_LIB . '/class-affiliates-nf.php';
-		include_once AFFILIATES_NINJA_FORMS_LIB. '/class-affiliates-nf-action.php';
+		include_once AFFILIATES_NINJA_FORMS_LIB . '/class-affiliates-nf-action.php';
 	}
 }
 Affiliates_Ninja_Forms::init();

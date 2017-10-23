@@ -42,7 +42,7 @@ function affiliates_ninja_forms_plugins_loaded() {
 		define( 'AFFILIATES_NINJA_FORMS_DIR', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 		define( 'AFFILIATES_NINJA_FORMS_LIB', AFFILIATES_NINJA_FORMS_DIR . '/lib' );
 		define( 'AFFILIATES_NINJA_FORMS_PLUGIN_URL', plugins_url( 'affiliates-ninja-forms' ) );
-		require_once 'class-affiliates-ninja-forms.php';
+		require_once AFFILIATES_NINJA_FORMS_LIB . '/class-affiliates-ninja-forms.php';
 	}
 }
 add_action( 'plugins_loaded', 'affiliates_ninja_forms_plugins_loaded' );

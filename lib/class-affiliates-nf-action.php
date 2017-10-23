@@ -219,6 +219,9 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 					$odd      = true;
 					$is_first = true;
 					$output .= '<table style="width:100%">';
+					/**
+					 * @var $rate Affiliates_Rate
+					 */
 					foreach ( $rates as $rate ) {
 						if ( $is_first ) {
 							$output .= wp_kses_post( $rate->view( array( 'style' => 'table', 'titles' => true, 'exclude' => array( 'integration', 'term_id', 'object_id' ), 'prefix_class' => 'odd' ) ) );

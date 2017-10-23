@@ -132,7 +132,7 @@ class Affiliates_NF_Admin {
 
 		echo '<p>';
 		echo wp_nonce_field( self::SET_ADMIN_OPTIONS, self::NONCE, true, false );
-		echo '<input class="button-primary" type="submit" name="submit" value="' . esc_attr__( 'Save', 'affiliates-ninja-forms' ) . '"/>';
+		// echo '<input class="button-primary" type="submit" name="submit" value="' . esc_attr__( 'Save', 'affiliates-ninja-forms' ) . '"/>';
 		echo '</p>';
 
 		echo '</div>';
