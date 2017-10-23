@@ -481,18 +481,51 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 
 	}
 
+	/**
+	 * Reject the referral.
+	 *
+	 * @param int $post_id
+	 */
 	public static function delete_post( $post_id ) {
 		if ( get_post_type( $post_id ) === 'nf_sub' ) {
-			// @todo ...
+			if ( class_exists( 'Affiliates_Referral' ) && method_exists( 'Affiliates_Referral', 'get_ids_by_reference' ) ) {
+				$referral_ids = Affiliates_Referral::get_ids_by_reference( $post_id );
+				foreach ( $referral_ids as $referral_id ) {
+					try {
+						$referral = new Affiliates_Referral();
+						if ( $referral->read( $referral_id ) ) {
+							if ( $referral->status !== AFFILIATES_REFERRAL_STATUS_CLOSED ) {
+								$referral->status = AFFILIATES_REFERRAL_STATUS_REJECTED;
+								$referral->update();
+							}
+						}
+					} catch ( Exception $ex ) {
+					}
+				}
+			}
 		}
 	}
 
+	/**
+	 * Reject the referral.
+	 *
+	 * @param int $post_id
+	 */
 	public static function wp_trash_post( $post_id ) {
-		// @todo ...
+		if ( get_post_type( $post_id ) === 'nf_sub' ) {
+			self::delete_post( $post_id );
+		}
 	}
 
+	/**
+	 * Update the referral status to its default.
+	 *
+	 * @param int $post_id
+	 */
 	public static function untrash_post( $post_id ) {
-		// @todo ...
+		if ( get_post_type( $post_id ) === 'nf_sub' ) {
+			
+		}
 	}
 
 }
