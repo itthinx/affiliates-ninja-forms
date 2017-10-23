@@ -103,37 +103,6 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 		// $settings = Ninja_Forms::config( 'ActionAffiliatesSettings' );
 		// $this->_settings = array_merge( $this->_settings, $settings );
 
-		$this->_settings['affiliates_registration'] = array(
-			'name' => 'affiliates_registration',
-			'type' => 'fieldset',
-			'label' => __( 'Registration', 'affiliates-ninja-forms' ),
-			'width' => 'full',
-			'group' => 'primary',
-			'settings' => array(
-				array(
-					'name'  => 'affiliates_enable_registration',
-					'label' => __( 'Enable Registration', 'affiliates-ninja-forms' ),
-					'type'  => 'toggle',
-					'group' => 'primary',
-					'help'  => __( 'Allow affiliates to register through this form.', 'affiliates-ninja-forms' ),
-					'width' => 'one-half'
-				),
-				array(
-					'name'    => 'affiliates_affiliate_status',
-					'label'   => __( 'Affiliate Status', 'affiliates-ninja-forms' ),
-					'type'    => 'select',
-					'group'   => 'primary',
-					'help'    => __( 'The default status of affiliates who register through this form.', 'affiliates-ninja-forms' ),
-					'value'   => $affiliate_status = get_option( 'aff_status', 'active' ),
-					'options' => array(
-						array( 'value' => 'active', 'label' => __( 'Active', 'affiliates-ninja-forms' ) ),
-						array( 'value' => 'pending', 'label' => __( 'Pending', 'affiliates-ninja-forms' ) )
-					),
-					'width' => 'one-half'
-				)
-			)
-		);
-
 		$this->_settings['affiliates_referrals'] = array(
 			'name' => 'affiliates_referrals',
 			'type' => 'fieldset',
@@ -361,20 +330,6 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 		}
 
 		return $data;
-	}
-
-	/**
-	 * Handle the affiliate registration request.
-	 *
-	 * @param array $action action settings
-	 * @param int $form_id form ID
-	 * @param array $data form, submission and other data
-	 * @param NF_Abstracts_ModelFactory $factory form factory
-	 * @param int $sub_id submission ID
-	 * @param NF_Database_Models_Submission $sub submission object
-	 */
-	private function process_registration( &$action, &$form_id, &$data, &$factory, &$sub_id = null, &$sub = null ) {
-		// @todo implement
 	}
 
 	/**
