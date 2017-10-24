@@ -41,14 +41,8 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	 */
 	public static function init() {
 		add_action( 'ninja_forms_register_actions', array( __CLASS__, 'ninja_forms_register_actions' ) );
-
-		// @todo remove ?
 		add_filter( 'ninja_forms_display_fields', array( __CLASS__, 'ninja_forms_display_fields' ) );
-
-		// @todo keep ?
-		// $settings = apply_filters( 'ninja_forms_display_form_settings', $settings, $form_id );
-		add_filter( 'ninja_forms_display_form_settings', array( __CLASS__, 'ninja_forms_display_form_settings' ), 10, 2 );
-
+		// add_filter( 'ninja_forms_display_form_settings', array( __CLASS__, 'ninja_forms_display_form_settings' ), 10, 2 );
 		add_action( 'ninja_forms_output_templates', array( __CLASS__, 'ninja_forms_output_templates' ), 99999 );
 	}
 
@@ -165,13 +159,12 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	}
 
 	/**
-	 * Basic checks for field consistency.
+	 * Would run checks for field consistency, currently not used.
 	 *
 	 * {@inheritDoc}
 	 * @see NF_Abstracts_Action::save()
 	 */
 	public function save( $action_settings ) {
-		error_log( __METHOD__. ' action_settings ' .var_export( $action_settings, true)); // @todo remove
 		return $action_settings;
 	}
 
@@ -238,14 +231,6 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	private function process_registration( &$action, &$form_id, &$data, &$factory, &$sub_id = null, &$sub = null ) {
 		if ( !empty( $action['affiliates_enable_registration'] ) ) {
 			$status = isset( $action['affiliates_affiliate_status'] ) ? $action['affiliates_affiliate_status'] : get_option( 'aff_status', 'active' );
-
-// 			error_log(__METHOD__. ' action = ' . var_export($action,true)); // @todo remove
-// 			error_log(__METHOD__. ' form_id = ' . var_export($form_id,true)); // @todo remove
-// 			error_log(__METHOD__. ' data = ' . var_export($data,true)); // @todo remove
-// 			error_log(__METHOD__. ' factory = ' . var_export($factory,true)); // @todo remove
-// 			error_log(__METHOD__. ' sub_id = ' . var_export($sub_id,true)); // @todo remove
-// 			error_log(__METHOD__. ' sub = ' . var_export($sub,true)); // @todo remove
-
 			if ( defined( 'AFFILIATES_CORE_LIB' ) ) {
 				$user = wp_get_current_user();
 				$registration_fields = self::get_affiliates_registration_fields();
@@ -273,7 +258,6 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 							}
 						}
 					}
-// error_log(__METHOD__. ' userdata = ' .var_export($userdata,true)); // @todo remove
 					if ( !is_user_logged_in() ) {
 						do_action( 'affiliates_before_register_affiliate', $userdata );
 						$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
@@ -281,7 +265,6 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 					} else {
 						$affiliate_user_id = $user->ID;
 					}
-// error_log(__METHOD__. ' affiliate_user_id = ' .var_export($affiliate_user_id,true)); // @todo remove
 					if ( !is_wp_error( $affiliate_user_id ) ) {
 						$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
 						// update user including meta
@@ -410,6 +393,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 
 	/**
 	 * Sets selected affiliate registration fields as readonly and disabled.
+	 * This is needed because disable_input does not work on some of them.
 	 */
 	public static function ninja_forms_output_templates() {
 		global $affiliates_ninja_forms_field_jquery;
@@ -425,13 +409,23 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 		}
 	}
 
-	// @todo keep ?
+	/**
+	 * Hook - currently not used.
+	 *
+	 * @param array $settings form settings
+	 * @param int $form_id form ID
+	 * @return array
+	 */
 	public static function ninja_forms_display_form_settings( $settings, $form_id ) {
-		error_log( __METHOD__. ' form_id = ' . var_export($form_id,true)); // @todo remove
-		error_log( __METHOD__. ' settings : ' . var_export($settings,true)); // @todo remove
 		return $settings;
 	}
 
+	/**
+	 * Returns the mapped name.
+	 *
+	 * @param string $name field name
+	 * @return string
+	 */
 	private static function get_mapped_affiliates_field_name( $name ) {
 		return sprintf( 'affiliates_field_%s', $name );
 	}
