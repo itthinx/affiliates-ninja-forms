@@ -242,13 +242,27 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 					foreach ( $registration_fields as $name => $field ) {
 						if ( $field['enabled'] || $field['obligatory'] ) {
 							$field_name = self::get_mapped_affiliates_field_name( $name );
-							$field_value = isset( $action[$field_name] ) ? $action[$field_name] : null;
-							if ( $value !== null ) {
-								$userdata[$name] = $action[$field_name];
-								// @todo : handle case when user is logged in (don't render fields and take fields from user object instead)
+							switch( $name ) {
+								case 'first_name' :
+								case 'last_name' :
+								case 'user_login' :
+								case 'user_email' :
+								case 'user_url' :
+									if ( is_user_logged_in() ) {
+										if ( !empty( $user->$name ) ) {
+											$action[$field_name] = sanitize_user_field( $name, $user->$name, $user->ID, 'display' );
+										}
+									}
+									break;
+								default :
+							}
+							$field_value = !empty( $action[$field_name] ) ? $action[$field_name] : '';
+							if ( $field_value !== null ) {
+								$userdata[$name] = $field_value;
 							}
 						}
 					}
+error_log(__METHOD__. ' userdata = ' .var_export($userdata,true)); // @todo remove
 					if ( !is_user_logged_in() ) {
 						do_action( 'affiliates_before_register_affiliate', $userdata );
 						$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
@@ -256,6 +270,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 					} else {
 						$affiliate_user_id = $user->ID;
 					}
+error_log(__METHOD__. ' affiliate_user_id = ' .var_export($affiliate_user_id,true)); // @todo remove
 					if ( !is_wp_error( $affiliate_user_id ) ) {
 						$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
 						// update user including meta
