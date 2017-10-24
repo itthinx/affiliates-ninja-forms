@@ -169,6 +169,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	 * @see NF_Abstracts_Action::save()
 	 */
 	public function save( $action_settings ) {
+		error_log( __METHOD__. ' action_settings ' .var_export( $action_settings, true)); // @todo remove
 		return $action_settings;
 	}
 
@@ -263,7 +264,6 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 										}
 									}
 									break;
-								default :
 							}
 							$field_value = !empty( $action[$field_name] ) ? $action[$field_name] : '';
 							if ( $field_value !== null ) {
@@ -316,20 +316,93 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 		return $registration_fields;
 	}
 
-	// @todo remove ?
+
+	/**
+	 * Use default values from the user object for certain registration fields and try to inhibit input if possible.
+	 * This is just for display purposes.
+	 *
+	 * @param array $fields
+	 * @return array fields
+	 */
 	public static function ninja_forms_display_fields( $fields ) {
-// 		error_log(__METHOD__. ' fields = ' . var_export($fields,true)); // @todo remove
-// 		$fields[0]['disable_input'] = true;
-// 		$fields[1]['disable_input'] = true;
-// 		$fields[2]['disable_input'] = true;
-// 		$fields[3]['disable_input'] = true;
+
+		global $wpdb;
+
+		if ( is_user_logged_in() ) {
+			$user = wp_get_current_user();
+			$affiliates_registration_action = null;
+
+			// Obtain the form id.
+			foreach ( $fields as $field ) {
+				if ( !empty( $field['id'] ) ) {
+					$id = intval( $field['id'] );
+					$form_id = $wpdb->get_var( $wpdb->prepare(
+						"SELECT parent_id from {$wpdb->prefix}nf3_fields WHERE id = %d", $id
+					) );
+					if ( $form_id !== null ) {
+						$factory = Ninja_Forms()->form( $form_id );
+						$actions = $factory->get_actions();
+						/**
+						 * @var NF_Database_Model_Action $action related form action
+						 */
+						foreach( $actions as $action ) {
+							if ( $action->get_setting( 'type' ) === 'affiliates_registration' ) {
+								$enabled = $action->get_setting( 'affiliates_enable_registration' );
+								if ( $enabled ) {
+									$affiliates_registration_action = $action;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// These are fields for an affiliate registration form. Check field mappings and set values from the user object.
+			if ( $affiliates_registration_action!== null ) {
+				$registration_fields = self::get_affiliates_registration_fields();
+				if ( count( $registration_fields ) > 0 ) {
+					$mapped_fields = array();
+					foreach ( $registration_fields as $name => $registration_field ) {
+						$field_name = self::get_mapped_affiliates_field_name( $name );
+						$field_value = $affiliates_registration_action->get_setting( $field_name );
+						if ( preg_match( '/{field:(.*?)}/', trim( $field_value ), $matches ) ) {
+							if ( !empty( $matches ) && !empty( $matches[1] ) ) {
+								$mapped_field_name = $matches[1];
+								$mapped_fields[$mapped_field_name] = $name;
+							}
+						}
+					}
+					if ( count( $mapped_fields ) > 0 ) {
+						for ( $i = 0; $i < count( $fields ); $i++ ) {
+							$key = !empty( $fields[$i]['key'] ) ? $fields[$i]['key'] : null;
+							if ( isset( $mapped_fields[$key] ) ) {
+								switch( $mapped_fields[$key] ) {
+									case 'first_name' :
+									case 'last_name' :
+									case 'user_login' :
+									case 'user_email' :
+									case 'user_url' :
+										$name = $mapped_fields[$key];
+										$fields[$i]['disable_input'] = true;
+										if ( !empty( $user->$name ) ) {
+											$fields[$i]['value']= sanitize_user_field( $name, $user->$name, $user->ID, 'display' );
+										}
+										break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 		return $fields;
 	}
 
 	// @todo keep ?
 	public static function ninja_forms_display_form_settings( $settings, $form_id ) {
-// 		error_log(' form_id = ' . var_export($form_id,true)); // @todo remove
-// 		error_log(' settings : ' . var_export($settings,true)); // @todo remove
+		error_log( __METHOD__. ' form_id = ' . var_export($form_id,true)); // @todo remove
+		error_log( __METHOD__. ' settings : ' . var_export($settings,true)); // @todo remove
 		return $settings;
 	}
 
