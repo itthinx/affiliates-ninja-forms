@@ -43,7 +43,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 		add_action( 'ninja_forms_register_actions', array( __CLASS__, 'ninja_forms_register_actions' ) );
 
 		// @todo remove ?
-		//add_filter( 'ninja_forms_display_fields', array( __CLASS__, 'ninja_forms_display_fields' ) );
+		add_filter( 'ninja_forms_display_fields', array( __CLASS__, 'ninja_forms_display_fields' ) );
 
 		// @todo keep ?
 		// $settings = apply_filters( 'ninja_forms_display_form_settings', $settings, $form_id );
@@ -113,10 +113,14 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 			$registration_fields = self::get_affiliates_registration_fields();
 			if ( count( $registration_fields ) > 0 ) {
 				foreach ( $registration_fields as $name => $field ) {
-					if ( $field['enabled'] || $field['obligatory'] ) {
+					if ( $field['enabled'] ) {
 						$this->_settings['affiliates_registration_mapping']['settings'][] = array(
 							'name'           => self::get_mapped_affiliates_field_name( $name ),
-							'label'          => sprintf( __( 'Affiliates Field : %s', 'affiliates-ninja-forms' ), esc_html__( $field['label'], 'affiliates-ninja-forms' ) ),
+							'label'          => sprintf(
+								__( 'Affiliates Field : %s%s', 'affiliates-ninja-forms' ),
+								esc_html__( $field['label'], 'affiliates-ninja-forms' ),
+								$field['required'] ? ' <span class="required">*</span>' : ''
+							),
 							'type'           => 'textbox',
 							'group'          => 'primary',
 							'help'           => __( 'Choose the form field that is mapped to this affiliate registration field.', 'affiliates-ninja-forms' ),
@@ -143,10 +147,16 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 					'name' => 'affiliates_field_mapping_help',
 					'label' => '',
 					'type' => 'html',
-					'value' => sprintf(
-						__( 'Here you can relate fields defined in the Affiliates <a href="%s">Registration</a> settings with fields on this form.', 'affiliates-ninja-forms' ),
-						esc_url( add_query_arg( 'section', 'registration', admin_url( 'admin.php?page=affiliates-admin-settings' ) ) )
-					)
+					'value' =>
+						'<p>' .
+						sprintf(
+							__( 'Here you can relate fields defined in the Affiliates <a href="%s">Registration</a> settings with fields on this form.', 'affiliates-ninja-forms' ),
+							esc_url( add_query_arg( 'section', 'registration', admin_url( 'admin.php?page=affiliates-admin-settings' ) ) )
+						) .
+						'</p>' .
+						'<p>' .
+						__( 'Required affiliate registration fields are marked with <span class="required">*</span>, these must be mapped to required form fields to allow successful form submissions.', 'affiliates-ninja-forms' ) .
+						'</p>'
 				);
 			}
 		}
@@ -225,14 +235,13 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	private function process_registration( &$action, &$form_id, &$data, &$factory, &$sub_id = null, &$sub = null ) {
 		if ( !empty( $action['affiliates_enable_registration'] ) ) {
 			$status = isset( $action['affiliates_affiliate_status'] ) ? $action['affiliates_affiliate_status'] : get_option( 'aff_status', 'active' );
-			// @todo implement
-			
-			error_log(__METHOD__. ' action = ' . var_export($action,true)); // @todo remove
-			error_log(__METHOD__. ' form_id = ' . var_export($form_id,true)); // @todo remove
-			error_log(__METHOD__. ' data = ' . var_export($data,true)); // @todo remove
-			error_log(__METHOD__. ' factory = ' . var_export($factory,true)); // @todo remove
-			error_log(__METHOD__. ' sub_id = ' . var_export($sub_id,true)); // @todo remove
-			error_log(__METHOD__. ' sub = ' . var_export($sub,true)); // @todo remove
+
+// 			error_log(__METHOD__. ' action = ' . var_export($action,true)); // @todo remove
+// 			error_log(__METHOD__. ' form_id = ' . var_export($form_id,true)); // @todo remove
+// 			error_log(__METHOD__. ' data = ' . var_export($data,true)); // @todo remove
+// 			error_log(__METHOD__. ' factory = ' . var_export($factory,true)); // @todo remove
+// 			error_log(__METHOD__. ' sub_id = ' . var_export($sub_id,true)); // @todo remove
+// 			error_log(__METHOD__. ' sub = ' . var_export($sub,true)); // @todo remove
 
 			if ( defined( 'AFFILIATES_CORE_LIB' ) ) {
 				$user = wp_get_current_user();
@@ -240,7 +249,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 				if ( count( $registration_fields ) > 0 ) {
 					$userdata = array();
 					foreach ( $registration_fields as $name => $field ) {
-						if ( $field['enabled'] || $field['obligatory'] ) {
+						if ( $field['enabled'] ) {
 							$field_name = self::get_mapped_affiliates_field_name( $name );
 							switch( $name ) {
 								case 'first_name' :
@@ -262,7 +271,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 							}
 						}
 					}
-error_log(__METHOD__. ' userdata = ' .var_export($userdata,true)); // @todo remove
+// error_log(__METHOD__. ' userdata = ' .var_export($userdata,true)); // @todo remove
 					if ( !is_user_logged_in() ) {
 						do_action( 'affiliates_before_register_affiliate', $userdata );
 						$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
@@ -270,7 +279,7 @@ error_log(__METHOD__. ' userdata = ' .var_export($userdata,true)); // @todo remo
 					} else {
 						$affiliate_user_id = $user->ID;
 					}
-error_log(__METHOD__. ' affiliate_user_id = ' .var_export($affiliate_user_id,true)); // @todo remove
+// error_log(__METHOD__. ' affiliate_user_id = ' .var_export($affiliate_user_id,true)); // @todo remove
 					if ( !is_wp_error( $affiliate_user_id ) ) {
 						$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
 						// update user including meta
@@ -309,14 +318,18 @@ error_log(__METHOD__. ' affiliate_user_id = ' .var_export($affiliate_user_id,tru
 
 	// @todo remove ?
 	public static function ninja_forms_display_fields( $fields ) {
-		error_log(var_export($fields,true)); // @todo remove
+// 		error_log(__METHOD__. ' fields = ' . var_export($fields,true)); // @todo remove
+// 		$fields[0]['disable_input'] = true;
+// 		$fields[1]['disable_input'] = true;
+// 		$fields[2]['disable_input'] = true;
+// 		$fields[3]['disable_input'] = true;
 		return $fields;
 	}
 
 	// @todo keep ?
 	public static function ninja_forms_display_form_settings( $settings, $form_id ) {
-		error_log(' form_id = ' . var_export($form_id,true)); // @todo remove
-		error_log(' settings : ' . var_export($settings,true)); // @todo remove
+// 		error_log(' form_id = ' . var_export($form_id,true)); // @todo remove
+// 		error_log(' settings : ' . var_export($settings,true)); // @todo remove
 		return $settings;
 	}
 
