@@ -48,6 +48,8 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 		// @todo keep ?
 		// $settings = apply_filters( 'ninja_forms_display_form_settings', $settings, $form_id );
 		add_filter( 'ninja_forms_display_form_settings', array( __CLASS__, 'ninja_forms_display_form_settings' ), 10, 2 );
+
+		add_action( 'ninja_forms_output_templates', array( __CLASS__, 'ninja_forms_output_templates' ), 99999 );
 	}
 
 	/**
@@ -385,8 +387,15 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 									case 'user_url' :
 										$name = $mapped_fields[$key];
 										$fields[$i]['disable_input'] = true;
+										$field_jquery = sprintf(
+											'jQuery("#nf-field-%d").attr("readonly","readonly").attr("disabled","disabled");',
+											intval( $fields[$i]['id'] )
+										);
+										global $affiliates_ninja_forms_field_jquery;
+										$affiliates_ninja_forms_field_jquery[] = $field_jquery;
+										// we can't add this to $fields[$i]['afterField'] as escaping is applied
 										if ( !empty( $user->$name ) ) {
-											$fields[$i]['value']= sanitize_user_field( $name, $user->$name, $user->ID, 'display' );
+											$fields[$i]['value'] = sanitize_user_field( $name, $user->$name, $user->ID, 'display' );
 										}
 										break;
 								}
@@ -397,6 +406,23 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 			}
 		}
 		return $fields;
+	}
+
+	/**
+	 * Sets selected affiliate registration fields as readonly and disabled.
+	 */
+	public static function ninja_forms_output_templates() {
+		global $affiliates_ninja_forms_field_jquery;
+		// this needs to be hooked on nfFormReady, document ready will not work
+		if ( !empty( $affiliates_ninja_forms_field_jquery ) ) {
+			echo '<script id="affiliates-ninja-forms-field-jquery" type="text/javascript">';
+			echo 'if ( typeof jQuery !== "undefined" ) {';
+			echo 'jQuery(document).on("nfFormReady",function(e,layoutView){';
+			echo implode( "\n", $affiliates_ninja_forms_field_jquery );
+			echo '});';
+			echo '}';
+			echo '</script>';
+		}
 	}
 
 	// @todo keep ?
