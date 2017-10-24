@@ -276,6 +276,14 @@ error_log(__METHOD__. ' affiliate_user_id = ' .var_export($affiliate_user_id,tru
 						// update user including meta
 						Affiliates_Registration::update_affiliate_user( $affiliate_user_id, $userdata );
 						do_action( 'affiliates_stored_affiliate', $affiliate_id, $affiliate_user_id );
+					} else {
+						/**
+						 * @var WP_Error $wp_error Affiliate registration errors.
+						 */
+						$wp_error = $affiliate_user_id;
+						foreach ( $wp_error->get_error_codes() as $error_code ) {
+							$data['errors']['form'][$error_code] = $wp_error->get_error_message( $error_code );
+						}
 					}
 				}
 			}
