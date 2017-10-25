@@ -30,10 +30,29 @@ if ( !defined( 'ABSPATH' ) ) {
  */
 class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 
+	/**
+	 * @var string action name
+	 */
 	protected $_name     = 'affiliates_registration';
+
+	/**
+	 * @var string name for humans (translatable, set in constructor)
+	 */
 	protected $_nicename = '';
+
+	/**
+	 * @var array tags related to the action
+	 */
 	protected $_tags     = array( 'affiliate', 'affiliates', 'affiliates pro', 'affiliates enterprise', 'itthinx', 'referral', 'referrals', 'lead', 'leads', 'registration', 'growth', 'growthhacking', 'growthmarketing' );
+
+	/**
+	 * @var string action timing (late)
+	 */
 	protected $_timing   = 'late';
+
+	/**
+	 * @var string action priority
+	 */
 	protected $_priority = '10';
 
 	/**
@@ -64,9 +83,6 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	public function __construct() {
 		parent::__construct();
 		$this->_nicename = __( 'Affiliates Registration', 'affiliates-ninja-forms' );
-		// $settings = Ninja_Forms::config( 'ActionAffiliatesSettings' );
-		// $this->_settings = array_merge( $this->_settings, $settings );
-
 		$this->_settings['affiliates_registration'] = array(
 			'name' => 'affiliates_registration',
 			'type' => 'fieldset',
