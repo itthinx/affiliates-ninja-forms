@@ -158,18 +158,28 @@ class Affiliates_NF_Admin {
 			'</p>' .
 			'<p>' .
 			sprintf(
-				__( 'This integrates <a href="%s">Affiliates</a>, <a href="%s">Affiliates Pro</a> and <a href="%s">Affiliates Enterprise</a> with Ninja Forms.', 'affiliates-ninja-forms' ),
+				__( 'It integrates <a href="%s">Affiliates</a>, <a href="%s">Affiliates Pro</a> and <a href="%s">Affiliates Enterprise</a> with <a href="%s">Ninja Forms</a>.', 'affiliates-ninja-forms' ),
 				esc_url( 'https://wordpress.org/plugins/affiliates/' ),
 				esc_url( 'https://www.itthinx.com/shop/affiliates-pro/' ),
-				esc_url( 'https://www.itthinx.com/shop/affiliates-enterprise/' )
+				esc_url( 'https://www.itthinx.com/shop/affiliates-enterprise/' ),
+				esc_url( 'https://wordpress.org/plugins/ninja-forms/' )
 			) .
 			'</p>' .
 			'<p>' .
-			__( 'To enable the integration for a form, add the <strong>Affiliates</strong> action to it.', 'affiliates-ninja-forms' ) .
+			 __( 'This integration features:', 'affiliates-ninja-forms' ) . '</li>' .
+			'</p>' .
+			'<ul style="list-style:inside">' .
+			'<li>' . __( 'Affiliate Registration Forms: Allow affiliates to sign up through a form provided by Ninja Forms.', 'affiliates-ninja-forms' ) . '</li>' .
+			'<li>' . __( 'Referrals and Leads: Allow affiliates to refer others to the site, record referrals to grant commissions on form submissions and gather leads.', 'affiliates-ninja-forms' ) . '</li>' .
+			'</ul>' .
+			'<p>' .
+			__( 'To enable referrals for a form, add the <strong>Affiliates</strong> action to it.', 'affiliates-ninja-forms' ) .
+			' ' .
+			__( 'To allow affiliates to register through a form, add the <strong>Affiliates Registration</strong> action to it.', 'affiliates-ninja-forms' ) .
 			'</p>' .
 			'<p>' .
 			__( 'Please refer to these documentation pages for more details:', 'affiliates-ninja-forms' ) .
-			'<ul>' .
+			'<ul style="list-style:inside">' .
 			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates/setup/settings/integrations/' ) ) .'</li>' .
 			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Pro</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/' ) ) .'</li>' .
 			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Enterprise</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/' ) ) .'</li>' .
