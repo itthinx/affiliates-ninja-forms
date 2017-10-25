@@ -30,10 +30,29 @@ if ( !defined( 'ABSPATH' ) ) {
  */
 class Affiliates_NF_Action extends NF_Abstracts_Action {
 
+	/**
+	 * @var string action name
+	 */
 	protected $_name     = 'affiliates';
+
+	/**
+	 * @var string action name for humans (translatable, set in constructor)
+	 */
 	protected $_nicename = '';
+
+	/**
+	 * @var array tags related to the action
+	 */
 	protected $_tags     = array( 'affiliate', 'affiliates', 'affiliates pro', 'affiliates enterprise', 'itthinx', 'referral', 'referrals', 'lead', 'leads', 'registration', 'growth', 'growthhacking', 'growthmarketing' );
+
+	/**
+	 * @var string action timing (late)
+	 */
 	protected $_timing   = 'late';
+
+	/**
+	 * @var string action priority
+	 */
 	protected $_priority = '10';
 
 	/**
