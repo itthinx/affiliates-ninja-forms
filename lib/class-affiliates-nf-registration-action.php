@@ -44,6 +44,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 		add_filter( 'ninja_forms_display_fields', array( __CLASS__, 'ninja_forms_display_fields' ) );
 		// add_filter( 'ninja_forms_display_form_settings', array( __CLASS__, 'ninja_forms_display_form_settings' ), 10, 2 );
 		add_action( 'ninja_forms_output_templates', array( __CLASS__, 'ninja_forms_output_templates' ), 99999 );
+		add_filter( 'ninja_forms_display_show_form', array( __CLASS__, 'ninja_forms_display_show_form' ), 10, 3 );
 	}
 
 	/**
@@ -418,6 +419,40 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	 */
 	public static function ninja_forms_display_form_settings( $settings, $form_id ) {
 		return $settings;
+	}
+
+	/**
+	 * Avoids rendering a form that is enabled for affiliate registration when the user is already an affiliate.
+	 *
+	 * @param boolean $show whether the form should be shown
+	 * @param int $form_id the form ID
+	 * @param object $form the form object
+	 *
+	 * @return boolean
+	 */
+	public static function ninja_forms_display_show_form( $show, $form_id, $form ) {
+		if ( $show && is_user_logged_in() ) {
+			if ( !empty( $form_id ) ) {
+				$factory = Ninja_Forms()->form( $form_id );
+				$actions = $factory->get_actions();
+				/**
+				 * @var NF_Database_Model_Action $action related form action
+				 */
+				foreach( $actions as $action ) {
+					if ( $action->get_setting( 'type' ) === 'affiliates_registration' ) {
+						$enabled = $action->get_setting( 'affiliates_enable_registration' );
+						if ( $enabled ) {
+							$affiliates_registration_action = $action;
+							if ( affiliates_user_is_affiliate() ) {
+								$show = false;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+		return $show;
 	}
 
 	/**
