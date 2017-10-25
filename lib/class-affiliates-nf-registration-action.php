@@ -385,6 +385,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 									case 'user_login' :
 									case 'user_email' :
 									case 'user_url' :
+									case 'password' :
 										$name = $mapped_fields[$key];
 										if ( !empty( $user->$name ) ) {
 											$fields[$i]['disable_input'] = true;
@@ -395,7 +396,11 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 											global $affiliates_ninja_forms_field_jquery;
 											$affiliates_ninja_forms_field_jquery[] = $field_jquery;
 											// we can't add this to $fields[$i]['afterField'] as escaping is applied
-											$fields[$i]['value'] = sanitize_user_field( $name, $user->$name, $user->ID, 'display' );
+											if ( $name !== 'password' ) {
+												$fields[$i]['value'] = sanitize_user_field( $name, $user->$name, $user->ID, 'display' );
+											} else {
+												$fields[$i]['value'] = '********';
+											}
 										}
 										break;
 								}
