@@ -387,7 +387,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 									case 'user_url' :
 									case 'password' :
 										$name = $mapped_fields[$key];
-										if ( !empty( $user->$name ) ) {
+										if ( !empty( $user->$name ) || $name === 'password' ) {
 											$fields[$i]['disable_input'] = true;
 											$field_jquery = sprintf(
 												'jQuery("#nf-field-%d").attr("readonly","readonly").attr("disabled","disabled");',
@@ -403,6 +403,22 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 											}
 										}
 										break;
+								}
+							}
+							// also disable any password confirm field related to an affiliate registration password field
+							$confirm_key = !empty( $fields[$i]['confirm_field'] ) ? $fields[$i]['confirm_field'] : null;
+							if ( $confirm_key !== null ) {
+								if ( isset( $mapped_fields[$confirm_key] ) ) {
+									if ( $mapped_fields[$confirm_key] === 'password' ) {
+										$fields[$i]['disable_input'] = true;
+										$field_jquery = sprintf(
+											'jQuery("#nf-field-%d").attr("readonly","readonly").attr("disabled","disabled");',
+											intval( $fields[$i]['id'] )
+										);
+										global $affiliates_ninja_forms_field_jquery;
+										$affiliates_ninja_forms_field_jquery[] = $field_jquery;
+										$fields[$i]['value'] = '********';
+									}
 								}
 							}
 						}
