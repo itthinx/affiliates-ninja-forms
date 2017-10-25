@@ -38,7 +38,7 @@ define( 'AFFILIATES_NINJA_FORMS_PLUGIN_VERSION', '2.0.0' );
  * Plugin boot.
  */
 function affiliates_ninja_forms_plugins_loaded() {
-	if ( class_exists( 'NF_Abstracts_Action' ) ) {
+	if ( class_exists( 'Affiliates' ) && class_exists( 'NF_Abstracts_Action' ) ) {
 		define( 'AFFILIATES_NINJA_FORMS_DIR', untrailingslashit( plugin_dir_path( __FILE__ ) ) );
 		define( 'AFFILIATES_NINJA_FORMS_LIB', AFFILIATES_NINJA_FORMS_DIR . '/lib' );
 		define( 'AFFILIATES_NINJA_FORMS_PLUGIN_URL', plugins_url( 'affiliates-ninja-forms' ) );
