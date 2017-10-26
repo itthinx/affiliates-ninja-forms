@@ -114,6 +114,21 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 			)
 		);
 
+		if ( class_exists( 'NF_UserManagement' ) ) {
+			$this->_settings['affiliates_registration']['settings'][] = array(
+				'name'  => 'affiliates_enable_user_management_registration',
+				'label' => __( 'Enable Registration via the <strong>Register User</strong> action', 'affiliates-ninja-forms' ),
+				'type'  => 'toggle',
+				'group' => 'primary',
+				'help'  =>
+					__( 'Allow affiliates to register through this form using the <strong>Register User</strong> action - this requires the <strong>User Management</strong> Add-On.', 'affiliates-ninja-forms' ) .
+					' ' .
+					__( 'The <strong>Affiliates Registration</strong> action will normally create a user account for new affiliates, but if this is enabled, the user account is created by the <strong>Register User</strong> action instead.', 'affiliates-ninja-forms' )
+					,
+				'width' => 'full'
+			);
+		}
+
 		if ( defined( 'AFFILIATES_CORE_LIB' ) ) {
 			$this->_settings['affiliates_registration_mapping'] = array(
 				'name'     => 'affiliates_registration_mapping',
@@ -173,6 +188,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 				);
 			}
 		}
+
 	}
 
 	/**
@@ -232,6 +248,15 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 			$this->process_registration( $action, $form_id, $data, $factory, $sub_id, $sub );
 		}
 
+		// @todo rather handle it within process_registration() as we just skip the user account creation in there and obtain the field values from the existing logged in user account
+// 		if (
+// 			isset( $data['actions'] ) &&
+// 			isset( $data['actions']['register-user'] )
+// 		) {
+// 			if ( !empty( $action['affiliates_enable_user_management_registration'] ) ) {
+// 				$this->process_user_management_registration( $action, $form_id, $data, $factory, $sub_id, $sub );
+// 			}
+// 		}
 		return $data;
 	}
 
