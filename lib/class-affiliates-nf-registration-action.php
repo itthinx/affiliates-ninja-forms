@@ -123,7 +123,9 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 					'label' => __( 'Automatic login', 'affiliates-ninja-forms' ),
 					'type'  => 'toggle',
 					'group' => 'primary',
-					'help'  => __( 'Automatically logs new users in upon successful registration.', 'affiliates-ninja-forms' ),
+					'help'  =>
+						__( 'Automatically logs new users in upon successful registration.', 'affiliates-ninja-forms' ) .
+						( class_exists( 'NF_UserManagement' ) ? ' ' . __( 'If registration via the <strong>Register User</strong> action is enabled, this option does not apply. Use the corresponding option of the <strong>Register User</strong> action instead.', 'affiliates-ninja-forms' ) : '' ),
 					'width' => 'full'
 				)
 			)
