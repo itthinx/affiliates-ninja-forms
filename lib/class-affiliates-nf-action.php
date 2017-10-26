@@ -122,9 +122,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 	public function __construct() {
 		parent::__construct();
 		$this->_nicename = __( 'Affiliates', 'affiliates-ninja-forms' );
-		// $settings = Ninja_Forms::config( 'ActionAffiliatesSettings' );
-		// $this->_settings = array_merge( $this->_settings, $settings );
-
+		$this->_priority = apply_filters( 'affiliates_ninja_forms_affiliates_nf_action_priority', $this->_priority );
 		$this->_settings['affiliates_referrals'] = array(
 			'name' => 'affiliates_referrals',
 			'type' => 'fieldset',

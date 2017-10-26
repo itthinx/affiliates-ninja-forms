@@ -83,6 +83,13 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 	public function __construct() {
 		parent::__construct();
 		$this->_nicename = __( 'Affiliates Registration', 'affiliates-ninja-forms' );
+		if ( class_exists( 'NF_UserManagement_Actions_RegisterUser' ) ) {
+			$r = new NF_UserManagement_Actions_RegisterUser();
+			if ( intval( $this->_priority ) <= $r->get_priority() ) {
+				$this->_priority = '' . ( $r->get_priority() + 10 );
+			}
+		}
+		$this->_priority = apply_filters( 'affiliates_ninja_forms_affiliates_nf_registration_action_priority', $this->_priority );
 		$this->_settings['affiliates_registration'] = array(
 			'name' => 'affiliates_registration',
 			'type' => 'fieldset',
@@ -300,14 +307,17 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 							}
 						}
 					}
+					$affiliate_user_id = null;
 					if ( !is_user_logged_in() ) {
-						do_action( 'affiliates_before_register_affiliate', $userdata );
-						$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
-						do_action( 'affiliates_after_register_affiliate', $userdata );
+						if ( empty( $action['affiliates_enable_user_management_registration'] ) || !$action['affiliates_enable_user_management_registration'] ) {
+							do_action( 'affiliates_before_register_affiliate', $userdata );
+							$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
+							do_action( 'affiliates_after_register_affiliate', $userdata );
+						}
 					} else {
 						$affiliate_user_id = $user->ID;
 					}
-					if ( !is_wp_error( $affiliate_user_id ) ) {
+					if ( $affiliate_user_id !== null && !is_wp_error( $affiliate_user_id ) ) {
 						$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
 						// update user including meta
 						Affiliates_Registration::update_affiliate_user( $affiliate_user_id, $userdata );
