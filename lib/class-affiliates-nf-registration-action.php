@@ -117,6 +117,14 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 						array( 'value' => 'pending', 'label' => __( 'Pending', 'affiliates-ninja-forms' ) )
 					),
 					'width' => 'one-half'
+				),
+				array(
+					'name' => 'affiliates_enable_registration_login',
+					'label' => __( 'Automatic login', 'affiliates-ninja-forms' ),
+					'type'  => 'toggle',
+					'group' => 'primary',
+					'help'  => __( 'Automatically logs new users in upon successful registration.', 'affiliates-ninja-forms' ),
+					'width' => 'full'
 				)
 			)
 		);
@@ -135,6 +143,33 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 				'width' => 'full'
 			);
 		}
+
+		$this->_settings['affiliates_registration']['settings'][] = array(
+			'name'           => 'affiliates_sign_up_field',
+			'label'          => __( 'Opt in', 'affiliates-ninja-forms' ),
+			'type'           => 'textbox',
+			'group'          => 'primary',
+			'help'           =>
+			__( 'You can use a checkbox to let the user choose whether to sign up as an affiliate or not.', 'affiliates-ninja-forms' ) .
+			' ' .
+			__( 'The field <strong>must</strong> be of type <em>Single Checkbox</em>, appropriately labelled, usually inviting the user to <em>&quot;Join the Affiliate Program&quot;</em>.', 'affiliates-ninja-forms' ) .
+			' ' .
+			__( 'If the user does not opt in, the form submission will simply allow to create the user account (without joining the affiliate program).', 'affiliates-ninja-forms' ),
+			'placeholder'    => __( 'Choose a field &hellip;', 'affiliates-ninja-forms' ),
+			'value'          => '',
+			'width'          => 'full',
+			'use_merge_tags' => array(
+				'include' => array(
+					'fields'
+				),
+				'exclude' => array(
+					'user',
+					'post',
+					'system',
+					'calculations'
+				)
+			)
+		);
 
 		if ( defined( 'AFFILIATES_CORE_LIB' ) ) {
 			$this->_settings['affiliates_registration_mapping'] = array(
@@ -313,15 +348,24 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 							do_action( 'affiliates_before_register_affiliate', $userdata );
 							$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
 							do_action( 'affiliates_after_register_affiliate', $userdata );
+							if ( $action['affiliates_enable_registration_login'] ) {
+								wp_set_current_user( $affiliate_user_id, $userdata['user_login'] );
+								wp_set_auth_cookie( $affiliate_user_id );
+								do_action( 'wp_login', $userdata['user_login'] );
+							}
 						}
 					} else {
 						$affiliate_user_id = $user->ID;
 					}
-					if ( $affiliate_user_id !== null && !is_wp_error( $affiliate_user_id ) ) {
-						$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
-						// update user including meta
-						Affiliates_Registration::update_affiliate_user( $affiliate_user_id, $userdata );
-						do_action( 'affiliates_stored_affiliate', $affiliate_id, $affiliate_user_id );
+					if ( !is_wp_error( $affiliate_user_id ) ) {
+						if ( $affiliate_user_id !== null  ) {
+							if ( empty( $action['affiliates_sign_up_field'] ) || $action['affiliates_sign_up_field'] === 'checked' ) {
+								$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
+								// update user including meta
+								Affiliates_Registration::update_affiliate_user( $affiliate_user_id, $userdata );
+								do_action( 'affiliates_stored_affiliate', $affiliate_id, $affiliate_user_id );
+							}
+						}
 					} else {
 						/**
 						 * @var WP_Error $wp_error Affiliate registration errors.
