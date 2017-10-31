@@ -18,7 +18,7 @@
  * @package affiliates-ninja-forms
  * @since affiliates-ninja-forms 1.0.0
  *
- * Plugin Name: Affiliates Ninja Forms Integration
+ * Plugin Name: Affiliates Ninja Forms
  * Plugin URI: http://www.itthinx.com/plugins/affiliates-ninja-forms/
  * Description: Integrates <a href="https://wordpress.org/plugins/affiliates/">Affiliates</a>, <a href="https://www.itthinx.com/shop/affiliates-pro/">Affiliates Pro</a> and <a href="https://www.itthinx.com/shop/affiliates-enterprise/">Affiliates Enterprise</a> with <a href="https://wordpress.org/plugins/ninja-forms/">Ninja Forms</a>.
  * Version: 2.0.0
