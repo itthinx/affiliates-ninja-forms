@@ -1,5 +1,5 @@
 === Affiliates Ninja Forms ===
-Contributors: itthinx, eggemplo, proaktion
+Contributors: itthinx, proaktion, eggemplo
 Donate link: http://www.itthinx.com/shop/
 Tags: affiliate, affiliates, affiliate marketing, referral, growth marketing, form, forms, ninja forms, affiliate plugin, affiliate tool, contact form, e-commerce, lead, lead, marketing, money, partner, referral links, referrer, sales, track, transaction
 Requires at least: 4.0.0
@@ -19,7 +19,7 @@ This integration features:
 
 Requirements:
 
-- [Ninja Forms 3](https://wordpress.org/plugins/ninja-forms/) : Please note that you must use version 3 or later.
+- [Ninja Forms](https://wordpress.org/plugins/ninja-forms/) : Please note that you must use version 3 or later.
 - [Affiliates](https://wordpress.org/plugins/affiliates/) or [Affiliates Pro](https://www.itthinx.com/shop/affiliates-pro/) or [Affiliates Enterprise](https://www.itthinx.com/shop/affiliates-enterprise/) : This integration works fully with all versions.
 - [Affiliates Ninja Forms](https://wordpress.org/plugins/affiliates-ninja-forms) : This plugin.
 
@@ -52,7 +52,7 @@ Please refer to the Documentation for details:
 == Changelog ==
 
 = 2.0.0 =
-* Affiliates, Affiliates Pro and Affiliates Enterprise 3.0.0 compatible.
+* Affiliates, Affiliates Pro and Affiliates Enterprise 2.x and 3.x compatible.
 * Ninja Forms 3 compatible.
 * Wordpress 4.8.2 compatible.
 
