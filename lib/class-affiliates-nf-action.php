@@ -363,7 +363,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 		$currency = $this->get_currency( $form_id );
 		$status   = isset( $action['affiliates_referral_status'] ) ? $action['affiliates_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
 
-		$description = sprintf( __( 'Ninja Forms form %d submission %d', 'affiliates-ninja-forms' ), intval( $form_id ), intval( $sub_id ) );
+		$description = sprintf( __( 'Ninja Forms form #%d submission #%d', 'affiliates-ninja-forms' ), intval( $form_id ), intval( $sub_id ) );
 
 		$referral_data = array();
 		$fields = $factory->get_fields();
