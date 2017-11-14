@@ -55,6 +55,7 @@ Please refer to the Documentation for details:
 * Added the changelog.txt
 * Fixed : check that user is created (and not an error object) before logging in.
 * Fixed : affiliate registration form also not to be shown for pending or deleted affiliates.
+* Added a missing translation (referral description).
 
 = 2.0.0 =
 * Affiliates, Affiliates Pro and Affiliates Enterprise 2.x and 3.x compatible.
