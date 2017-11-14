@@ -432,11 +432,11 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 
 					$referral_items = array();
 					if ( $rate = $rc->seek_rate( array(
-							'affiliate_id' => $affiliate_id,
-							'object_id'    => $form_id,
-							'term_ids'     => null,
-							'integration'  => 'affiliates-ninja-forms',
-							'group_ids'    => $group_ids
+						'affiliate_id' => $affiliate_id,
+						'object_id'    => $form_id,
+						'term_ids'     => null,
+						'integration'  => 'affiliates-ninja-forms',
+						'group_ids'    => $group_ids
 					) ) ) {
 						$rate_id = $rate->rate_id;
 						$amount = '0';
@@ -457,7 +457,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 						$referral_item = new Affiliates_Referral_Item( array(
 							'rate_id'     => $rate_id,
 							'amount'      => $amount,
-							'currency_id' => $rate->currency_id,
+							'currency_id' => $rate->currency_id !== null ? $rate->currency_id : $currency,
 							'type'        => 'nf_sub',
 							'reference'   => $sub_id,
 							'line_amount' => $amount,
@@ -468,7 +468,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 					$params['post_id']          = $sub_id;
 					$params['description']      = $description;
 					$params['data']             = $referral_data;
-					$params['currency_id']      = $rate->currency_id;
+					$params['currency_id']      = $rate->currency_id !== null ? $rate->currency_id : $currency;
 					$params['type']             = Affiliates_Ninja_Forms::REFERRAL_TYPE; // 'nform'
 					$params['referral_items']   = $referral_items;
 					$params['reference']        = $sub_id;
