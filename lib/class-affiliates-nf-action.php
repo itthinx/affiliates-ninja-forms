@@ -455,13 +455,13 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 						}
 
 						$referral_item = new Affiliates_Referral_Item( array(
-								'rate_id'     => $rate_id,
-								'amount'      => $amount,
-								'currency_id' => $rate->currency_id,
-								'type'        => 'nf_sub',
-								'reference'   => $sub_id,
-								'line_amount' => $amount,
-								'object_id'   => $form_id
+							'rate_id'     => $rate_id,
+							'amount'      => $amount,
+							'currency_id' => $rate->currency_id,
+							'type'        => 'nf_sub',
+							'reference'   => $sub_id,
+							'line_amount' => $amount,
+							'object_id'   => $form_id
 						) );
 						$referral_items[] = $referral_item;
 					}
@@ -474,7 +474,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 					$params['reference']        = $sub_id;
 					$params['reference_amount'] = $amount;
 					$params['integration']      = 'affiliates-ninja-forms';
-					
+
 					$rc->add_referral( $params );
 				}
 			}
