@@ -4,6 +4,7 @@ Donate link: http://www.itthinx.com/shop/
 Tags: affiliate, affiliates, affiliate marketing, referral, growth marketing, form, forms, ninja forms, affiliate plugin, affiliate tool, contact form, e-commerce, lead, lead, marketing, money, partner, referral links, referrer, sales, track, transaction
 Requires at least: 4.0.0
 Tested up to: 4.9
+Requires PHP: 5.5.0
 Stable tag: 2.0.0
 License: GPLv3
 
