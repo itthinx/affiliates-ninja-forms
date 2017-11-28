@@ -363,7 +363,7 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 		$currency = $this->get_currency( $form_id );
 		$status   = isset( $action['affiliates_referral_status'] ) ? $action['affiliates_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
 
-		$description = sprintf( 'Ninja Forms form %d submission %d', $form_id, $sub_id );
+		$description = sprintf( __( 'Ninja Forms form #%d submission #%d', 'affiliates-ninja-forms' ), intval( $form_id ), intval( $sub_id ) );
 
 		$referral_data = array();
 		$fields = $factory->get_fields();
@@ -432,11 +432,11 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 
 					$referral_items = array();
 					if ( $rate = $rc->seek_rate( array(
-							'affiliate_id' => $affiliate_id,
-							'object_id'    => $form_id,
-							'term_ids'     => null,
-							'integration'  => 'affiliates-ninja-forms',
-							'group_ids'    => $group_ids
+						'affiliate_id' => $affiliate_id,
+						'object_id'    => $form_id,
+						'term_ids'     => null,
+						'integration'  => 'affiliates-ninja-forms',
+						'group_ids'    => $group_ids
 					) ) ) {
 						$rate_id = $rate->rate_id;
 						$amount = '0';
@@ -455,26 +455,26 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 						}
 
 						$referral_item = new Affiliates_Referral_Item( array(
-								'rate_id'     => $rate_id,
-								'amount'      => $amount,
-								'currency_id' => $rate->currency_id,
-								'type'        => 'nf_sub',
-								'reference'   => $sub_id,
-								'line_amount' => $amount,
-								'object_id'   => $form_id
+							'rate_id'     => $rate_id,
+							'amount'      => $amount,
+							'currency_id' => $rate->currency_id !== null ? $rate->currency_id : $currency,
+							'type'        => 'nf_sub',
+							'reference'   => $sub_id,
+							'line_amount' => $amount,
+							'object_id'   => $form_id
 						) );
 						$referral_items[] = $referral_item;
 					}
 					$params['post_id']          = $sub_id;
 					$params['description']      = $description;
 					$params['data']             = $referral_data;
-					$params['currency_id']      = $rate->currency_id;
+					$params['currency_id']      = $rate->currency_id !== null ? $rate->currency_id : $currency;
 					$params['type']             = Affiliates_Ninja_Forms::REFERRAL_TYPE; // 'nform'
 					$params['referral_items']   = $referral_items;
 					$params['reference']        = $sub_id;
 					$params['reference_amount'] = $amount;
 					$params['integration']      = 'affiliates-ninja-forms';
-					
+
 					$rc->add_referral( $params );
 				}
 			}

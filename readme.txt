@@ -3,8 +3,9 @@ Contributors: itthinx, proaktion, eggemplo
 Donate link: http://www.itthinx.com/shop/
 Tags: affiliate, affiliates, affiliate marketing, referral, growth marketing, form, forms, ninja forms, affiliate plugin, affiliate tool, contact form, e-commerce, lead, lead, marketing, money, partner, referral links, referrer, sales, track, transaction
 Requires at least: 4.0.0
-Tested up to: 4.8.2
-Stable tag: 2.0.0
+Tested up to: 4.9
+Requires PHP: 5.5.0
+Stable tag: 2.0.1
 License: GPLv3
 
 Integrates [Affiliates](https://wordpress.org/plugins/affiliates/), [Affiliates Pro](https://www.itthinx.com/shop/affiliates-pro/) and [Affiliates Enterprise](https://www.itthinx.com/shop/affiliates-enterprise/) with [Ninja Forms](https://wordpress.org/plugins/ninja-forms/).
@@ -51,10 +52,19 @@ Please refer to the Documentation for details:
 
 == Changelog ==
 
+= 2.0.1 =
+* Added the changelog.txt
+* Fixed : check that user is created (and not an error object) before logging in.
+* Fixed : affiliate registration form also not to be shown for pending or deleted affiliates.
+* Added a missing translation (referral description).
+* Fixed : currency was only used from rate.
+* Wordpress 4.9 compatible.
+
 = 2.0.0 =
 * Affiliates, Affiliates Pro and Affiliates Enterprise 2.x and 3.x compatible.
 * Ninja Forms 3 compatible.
 * Wordpress 4.8.2 compatible.
 
-= 1.0.0 =
-* Initial release (rather sparse and internal).
+== Upgrade Notice ==
+
+This release contains fixes related to the affiliate registration and to the currency used for form referrals.
