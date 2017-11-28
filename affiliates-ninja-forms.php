@@ -21,7 +21,7 @@
  * Plugin Name: Affiliates Ninja Forms
  * Plugin URI: http://www.itthinx.com/plugins/affiliates-ninja-forms/
  * Description: Integrates <a href="https://wordpress.org/plugins/affiliates/">Affiliates</a>, <a href="https://www.itthinx.com/shop/affiliates-pro/">Affiliates Pro</a> and <a href="https://www.itthinx.com/shop/affiliates-enterprise/">Affiliates Enterprise</a> with <a href="https://wordpress.org/plugins/ninja-forms/">Ninja Forms</a>.
- * Version: 2.0.0
+ * Version: 2.0.1
  * Author: itthinx
  * Author URI: http://www.itthinx.com/
  * Donate-Link: http://www.itthinx.com/shop/affiliates-enterprise/
@@ -32,7 +32,7 @@ if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AFFILIATES_NINJA_FORMS_PLUGIN_VERSION', '2.0.0' );
+define( 'AFFILIATES_NINJA_FORMS_PLUGIN_VERSION', '2.0.1' );
 
 /**
  * Plugin boot.

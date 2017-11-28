@@ -5,7 +5,7 @@ Tags: affiliate, affiliates, affiliate marketing, referral, growth marketing, fo
 Requires at least: 4.0.0
 Tested up to: 4.9
 Requires PHP: 5.5.0
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv3
 
 Integrates [Affiliates](https://wordpress.org/plugins/affiliates/), [Affiliates Pro](https://www.itthinx.com/shop/affiliates-pro/) and [Affiliates Enterprise](https://www.itthinx.com/shop/affiliates-enterprise/) with [Ninja Forms](https://wordpress.org/plugins/ninja-forms/).
@@ -67,4 +67,4 @@ Please refer to the Documentation for details:
 
 == Upgrade Notice ==
 
-This release contains two fixes related to the affiliate registration.
+This release contains fixes related to the affiliate registration and to the currency used for form referrals.
