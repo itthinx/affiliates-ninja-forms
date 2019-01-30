@@ -448,6 +448,36 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 								// check form for base_amount
 								$amount = bcmul( $base_amount, $rate->value, affiliates_get_referral_amount_decimals() );
 								break;
+							case AFFILIATES_PRO_RATES_TYPE_FORMULA :
+								$tokenizer = new Affiliates_Formula_Tokenizer( $rate->get_meta( 'formula' ) );
+								// We don't support variable quantities on several items here so just use 1 as quantity.
+								$quantity = 1;
+								$variables = apply_filters(
+									'affiliates_formula_computer_variables',
+									array(
+										's' => $base_amount,
+										't' => $base_amount,
+										'p' => $base_amount / $quantity,
+										'q' => $quantity
+									),
+									$rate,
+									array(
+										'affiliate_id' => $affiliate_id,
+										'integration'  => 'affiliates-ninja-forms',
+										'form_id'      => $form_id,
+										'sub_id'       => $sub_id
+									)
+								);
+								$computer = new Affiliates_Formula_Computer( $tokenizer, $variables );
+								$amount = $computer->compute();
+								if ( $computer->has_errors() ) {
+									affiliates_log_error( $computer->get_errors_pretty( 'text' ) );
+								}
+								if ( $amount === null || $amount < 0 ) {
+									$amount = 0.0;
+								}
+								$amount = bcadd( '0', $amount, affiliates_get_referral_amount_decimals() );
+								break;
 						}
 						// split proportional total if multiple affiliates are involved
 						if ( $n > 1 ) {
