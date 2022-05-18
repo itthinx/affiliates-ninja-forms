@@ -26,7 +26,7 @@ if ( !defined( 'ABSPATH' ) ) {
 /**
  * Adds the Affiliates action to Ninja Forms.
  *
- * @link http://developer.ninjaforms.com/codex/registering-actions/
+ * @link https://developer.ninjaforms.com/codex/registering-actions/
  */
 class Affiliates_NF_Action extends NF_Abstracts_Action {
 

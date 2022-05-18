@@ -26,7 +26,7 @@ if ( !defined( 'ABSPATH' ) ) {
 /**
  * Adds the Affiliates Registration action to Ninja Forms.
  *
- * @link http://developer.ninjaforms.com/codex/registering-actions/
+ * @link https://developer.ninjaforms.com/codex/registering-actions/
  */
 class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 
@@ -341,7 +341,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 							do_action( 'affiliates_before_register_affiliate', $userdata );
 							$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
 							do_action( 'affiliates_after_register_affiliate', $userdata );
-							if ( !is_wp_error( $affiliate_user_id ) && $action['affiliates_enable_registration_login'] ) {
+							if ( !is_wp_error( $affiliate_user_id ) && isset( $action['affiliates_enable_registration_login'] ) && $action['affiliates_enable_registration_login'] ) {
 								wp_set_current_user( $affiliate_user_id, $userdata['user_login'] );
 								wp_set_auth_cookie( $affiliate_user_id );
 								do_action( 'wp_login', $userdata['user_login'], get_user_by( 'id', $affiliate_user_id ) );
@@ -352,7 +352,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 					}
 					if ( !is_wp_error( $affiliate_user_id ) ) {
 						if ( $affiliate_user_id !== null  ) {
-							if ( empty( $action['affiliates_sign_up_field'] ) || $action['affiliates_sign_up_field'] === 'checked' ) {
+							if ( empty( $action['affiliates_sign_up_field'] ) || strtolower( $action['affiliates_sign_up_field'] ) === 'checked' ) {
 								$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
 								// update user including meta
 								Affiliates_Registration::update_affiliate_user( $affiliate_user_id, $userdata );
