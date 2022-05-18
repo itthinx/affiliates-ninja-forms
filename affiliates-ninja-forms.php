@@ -25,14 +25,14 @@
  * Author URI: http://www.itthinx.com/
  * Donate-Link: http://www.itthinx.com/shop/affiliates-enterprise/
  * License: GPLv3
- * Version: 3.1.0
+ * Version: 3.2.0
  */
 
 if ( !defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AFFILIATES_NINJA_FORMS_PLUGIN_VERSION', '3.1.0' );
+define( 'AFFILIATES_NINJA_FORMS_PLUGIN_VERSION', '3.2.0' );
 
 /**
  * Plugin boot.
