@@ -37,7 +37,7 @@ class Affiliates_NF_Admin {
 	public static function init() {
 		if ( current_user_can( AFFILIATES_ADMINISTER_OPTIONS ) ) {
 			add_action( 'affiliates_admin_menu', array( __CLASS__, 'affiliates_admin_menu' ) );
-			// http://developer.ninjaforms.com/codex/registering-plugin-settings/
+			// https://developer.ninjaforms.com/codex/registering-plugin-settings/
 			add_filter( 'ninja_forms_plugin_settings', array( __CLASS__, 'ninja_forms_plugin_settings' ) );
 			add_filter( 'ninja_forms_plugin_settings_groups', array( __CLASS__, 'ninja_forms_plugin_settings_groups' ) );
 			
@@ -180,9 +180,9 @@ class Affiliates_NF_Admin {
 			'<p>' .
 			__( 'Please refer to these documentation pages for more details:', 'affiliates-ninja-forms' ) .
 			'<ul style="list-style:inside">' .
-			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates/setup/settings/integrations/' ) ) .'</li>' .
-			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Pro</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/' ) ) .'</li>' .
-			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Enterprise</a>', 'affiliates-ninja-forms' ), esc_url( 'http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/' ) ) .'</li>' .
+			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates</a>', 'affiliates-ninja-forms' ), esc_url( 'https://docs.itthinx.com/document/affiliates/setup/settings/integrations/' ) ) .'</li>' .
+			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Pro</a>', 'affiliates-ninja-forms' ), esc_url( 'https://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/' ) ) .'</li>' .
+			'<li>' . sprintf( __( 'Integration with <a href="%s">Affiliates Enterprise</a>', 'affiliates-ninja-forms' ), esc_url( 'https://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/' ) ) .'</li>' .
 			'</ul>' .
 			'</p>';
 	}

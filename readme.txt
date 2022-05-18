@@ -1,8 +1,8 @@
 === Affiliates Ninja Forms ===
 Contributors: itthinx, proaktion, eggemplo
-Donate link: http://www.itthinx.com/shop/
+Donate link: https://www.itthinx.com/shop/
 Tags: affiliate, affiliates, affiliate marketing, referral, growth marketing, form, forms, ninja forms, affiliate plugin, affiliate tool, contact form, e-commerce, lead, lead, marketing, money, partner, referral links, referrer, sales, track, transaction
-Requires at least: 4.0.0
+Requires at least: 5.6
 Tested up to: 6.0
 Requires PHP: 5.6.0
 Stable tag: 3.2.0
@@ -26,9 +26,9 @@ Requirements:
 
 Documentation:
 
-- [Integration with Affiliates](http://docs.itthinx.com/document/affiliates/setup/settings/integrations/)
-- [Integration with Affiliates Pro](http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/)
-- [Integration with Affiliates Enterprise](http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/)
+- [Integration with Affiliates](https://docs.itthinx.com/document/affiliates/setup/settings/integrations/)
+- [Integration with Affiliates Pro](https://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/)
+- [Integration with Affiliates Enterprise](https://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/)
 
 == Installation ==
 
@@ -46,30 +46,15 @@ You can also upload and extract them in your site's `/wp-content/plugins/` direc
 
 Please refer to the Documentation for details:
 
-- [Integration with Affiliates](http://docs.itthinx.com/document/affiliates/setup/settings/integrations/)
-- [Integration with Affiliates Pro](http://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/)
-- [Integration with Affiliates Enterprise](http://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/)
+- [Integration with Affiliates](https://docs.itthinx.com/document/affiliates/setup/settings/integrations/)
+- [Integration with Affiliates Pro](https://docs.itthinx.com/document/affiliates-pro//setup/settings/integrations/)
+- [Integration with Affiliates Enterprise](https://docs.itthinx.com/document/affiliates-enterprise/setup/settings/integrations/)
 
 == Changelog ==
 
-= 3.0.0 =
-- WordPress 5.x compatible.
-- Added support for rate formulas (requires Affiliates Pro >= 4.x or Affiliates Enterprise >= 4.x).
-
-= 2.0.1 =
-* Added the changelog.txt
-* Fixed : check that user is created (and not an error object) before logging in.
-* Fixed : affiliate registration form also not to be shown for pending or deleted affiliates.
-* Added a missing translation (referral description).
-* Fixed : currency was only used from rate.
-* Wordpress 4.9 compatible.
-
-= 2.0.0 =
-* Affiliates, Affiliates Pro and Affiliates Enterprise 2.x and 3.x compatible.
-* Ninja Forms 3 compatible.
-* Wordpress 4.8.2 compatible.
+See [changelog.txt](https://github.com/itthinx/affiliates-ninja-forms/blob/master/changelog.txt).
 
 == Upgrade Notice ==
 
-This version is compatible with WordPress 5.x, Affiliates, Affiliates Pro and Affiliates Enterprise.
-Support for formula-based rates requires Affiliates Pro 4.x or Affiliates Enterprise 4.x.
+This version is compatible with the latest versions of WordPress, Affiliates, Affiliates Pro and Affiliates Enterprise.
+Support for formula-based rates requires at least Affiliates Pro 4.x or Affiliates Enterprise 4.x.
