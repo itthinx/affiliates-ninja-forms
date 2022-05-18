@@ -341,7 +341,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 							do_action( 'affiliates_before_register_affiliate', $userdata );
 							$affiliate_user_id = Affiliates_Registration::register_affiliate( $userdata );
 							do_action( 'affiliates_after_register_affiliate', $userdata );
-							if ( !is_wp_error( $affiliate_user_id ) && $action['affiliates_enable_registration_login'] ) {
+							if ( !is_wp_error( $affiliate_user_id ) && isset( $action['affiliates_enable_registration_login'] ) && $action['affiliates_enable_registration_login'] ) {
 								wp_set_current_user( $affiliate_user_id, $userdata['user_login'] );
 								wp_set_auth_cookie( $affiliate_user_id );
 								do_action( 'wp_login', $userdata['user_login'], get_user_by( 'id', $affiliate_user_id ) );
