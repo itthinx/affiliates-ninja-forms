@@ -352,7 +352,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 					}
 					if ( !is_wp_error( $affiliate_user_id ) ) {
 						if ( $affiliate_user_id !== null  ) {
-							if ( empty( $action['affiliates_sign_up_field'] ) || $action['affiliates_sign_up_field'] === 'checked' ) {
+							if ( empty( $action['affiliates_sign_up_field'] ) || strtolower( $action['affiliates_sign_up_field'] ) === 'checked' ) {
 								$affiliate_id = Affiliates_Registration::store_affiliate( $affiliate_user_id, $userdata, $status );
 								// update user including meta
 								Affiliates_Registration::update_affiliate_user( $affiliate_user_id, $userdata );
