@@ -1,10 +1,10 @@
 === Affiliates Ninja Forms ===
 Contributors: itthinx, proaktion, eggemplo
 Donate link: https://www.itthinx.com/shop/
-Tags: affiliate, affiliates, affiliate marketing, referral, growth marketing, form, forms, ninja forms, affiliate plugin, affiliate tool, contact form, e-commerce, lead, lead, marketing, money, partner, referral links, referrer, sales, track, transaction
-Requires at least: 5.6
+Tags: affiliate, affiliates, contact form, lead form, forms
+Requires at least: 6.5
 Tested up to: 6.8
-Requires PHP: 5.6.0
+Requires PHP: 7.4
 Stable tag: 3.3.0
 License: GPLv3
 

@@ -2,7 +2,7 @@
 /**
  * affiliates-ninja-forms.php
  *
- * Copyright (c) 2017-2022 "kento" Karim Rahimpur www.itthinx.com
+ * Copyright (c) 2017-2025 "kento" Karim Rahimpur www.itthinx.com
  *
  * This code is released under the GNU General Public License.
  * See COPYRIGHT.txt and LICENSE.txt.
@@ -21,11 +21,13 @@
  * Plugin Name: Affiliates Ninja Forms
  * Plugin URI: https://www.itthinx.com/plugins/affiliates-ninja-forms/
  * Description: Integrates <a href="https://wordpress.org/plugins/affiliates/">Affiliates</a>, <a href="https://www.itthinx.com/shop/affiliates-pro/">Affiliates Pro</a> and <a href="https://www.itthinx.com/shop/affiliates-enterprise/">Affiliates Enterprise</a> with <a href="https://wordpress.org/plugins/ninja-forms/">Ninja Forms</a>.
+ * Version: 3.3.0
+ * Requires at least: 6.5
+ * Requires PHP: 7.4
  * Author: itthinx
  * Author URI: https://www.itthinx.com/
  * Donate-Link: https://www.itthinx.com/shop/
  * License: GPLv3
- * Version: 3.3.0
  */
 
 if ( !defined( 'ABSPATH' ) ) {
