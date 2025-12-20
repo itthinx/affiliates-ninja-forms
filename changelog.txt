@@ -1,5 +1,8 @@
 Affiliates Ninja Forms                Changelog                www.itthinx.com
 
+= 3.4.0 =
+* WordPress 6.9 compatible.
+
 = 3.3.0 =
 * WordPress 6.8 compatible.
 * Requires at least WordPress 6.5.
