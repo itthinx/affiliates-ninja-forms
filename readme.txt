@@ -3,9 +3,9 @@ Contributors: itthinx, proaktion, eggemplo
 Donate link: https://www.itthinx.com/shop/
 Tags: affiliate, affiliates, contact form, lead form, forms
 Requires at least: 6.5
-Tested up to: 6.9
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.4.0
+Stable tag: 4.0.0
 License: GPLv3
 
 Integrates [Affiliates](https://wordpress.org/plugins/affiliates/), [Affiliates Pro](https://www.itthinx.com/shop/affiliates-pro/) and [Affiliates Enterprise](https://www.itthinx.com/shop/affiliates-enterprise/) with [Ninja Forms](https://wordpress.org/plugins/ninja-forms/).
