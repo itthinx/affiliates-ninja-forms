@@ -263,7 +263,13 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 				'name'  => 'affiliates_currency',
 				'label' => __( 'Currency', 'affiliates-ninja-forms' ),
 				'type'  => 'html',
-				'value' => '<p class="description">' . sprintf( __( 'The currency used for this form is <strong>%s</strong>.', 'affiliates-ninja-forms' ), esc_html( $currency ) ) . '</p>',
+				'value' => '<p class="description">' .
+					sprintf(
+						/* translators: Currency */
+						__( 'The currency used for this form is <strong>%s</strong>.', 'affiliates-ninja-forms' ),
+						esc_html( $currency )
+					) . 
+				'</p>',
 				'group' => 'primary',
 				'width' => 'full'
 			);
@@ -363,7 +369,12 @@ class Affiliates_NF_Action extends NF_Abstracts_Action {
 		$currency = $this->get_currency( $form_id );
 		$status   = isset( $action['affiliates_referral_status'] ) ? $action['affiliates_referral_status'] : get_option( 'aff_default_referral_status', AFFILIATES_REFERRAL_STATUS_ACCEPTED );
 
-		$description = sprintf( __( 'Ninja Forms form #%d submission #%d', 'affiliates-ninja-forms' ), intval( $form_id ), intval( $sub_id ) );
+		$description = sprintf(
+			/* translators: 1 Form id 2 Submission id */
+			__( 'Ninja Forms form #%1$d submission #%1$d', 'affiliates-ninja-forms' ),
+			intval( $form_id ),
+			intval( $sub_id ) 
+		);
 
 		$referral_data = array();
 		$fields = $factory->get_fields();

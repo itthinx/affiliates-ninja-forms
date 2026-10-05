@@ -189,8 +189,9 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 						$this->_settings['affiliates_registration_mapping']['settings'][] = array(
 							'name'           => self::get_mapped_affiliates_field_name( $name ),
 							'label'          => sprintf(
-								__( 'Affiliates Field : %s%s', 'affiliates-ninja-forms' ),
-								esc_html__( $field['label'], 'affiliates-ninja-forms' ),
+								/* translators: 1 Affiliates Field label, 2 If the field is required or not */
+								__( 'Affiliates Field : %1$s%2$s', 'affiliates-ninja-forms' ),
+								esc_html( $field['label'] ),
 								$field['required'] ? ' <span class="required">*</span>' : ''
 							),
 							'type'           => 'textbox',
@@ -222,6 +223,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 					'value' =>
 						'<p>' .
 						sprintf(
+						/* translators: Affiliates Registration fields */
 							__( 'Here you can relate fields defined in the Affiliates <a href="%s">Registration</a> settings with fields on this form.', 'affiliates-ninja-forms' ),
 							esc_url( add_query_arg( 'section', 'registration', admin_url( 'admin.php?page=affiliates-admin-settings' ) ) )
 						) .
@@ -512,7 +514,7 @@ class Affiliates_NF_Registration_Action extends NF_Abstracts_Action {
 			echo '<script id="affiliates-ninja-forms-field-jquery" type="text/javascript">';
 			echo 'if ( typeof jQuery !== "undefined" ) {';
 			echo 'jQuery(document).on("nfFormReady",function(e,layoutView){';
-			echo implode( "\n", $affiliates_ninja_forms_field_jquery );
+			echo implode( "\n", $affiliates_ninja_forms_field_jquery ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo '});';
 			echo '}';
 			echo '</script>';
