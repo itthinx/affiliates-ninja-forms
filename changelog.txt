@@ -2,6 +2,9 @@ Affiliates Ninja Forms                Changelog                www.itthinx.com
 
 = 4.0.0 =
 * WordPress 7.1 compatible.
+* Added missing translators comments.
+* Added bypassing comments for false-positive warnings.
+* Escaped output wherever missing.
 
 = 3.4.0 =
 * WordPress 6.9 compatible.
